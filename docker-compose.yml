@@ -1,0 +1,11 @@
+services:
+  database:
+      image: postgres:18
+      environment:
+        POSTGRES_USER: adminuser
+        POSTGRES_PASSWORD: adminpassword
+        POSTGRES_DB: fullstack_poc_db
+#      volumes:
+#        - db-data: /var/lib/postgresql/data
+      ports:
+        - 5432:5432
