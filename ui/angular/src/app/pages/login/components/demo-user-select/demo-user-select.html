@@ -1,0 +1,21 @@
+<div>
+  <mat-form-field>
+    <mat-label>Username</mat-label>
+    <input type="text"
+           placeholder="Username"
+           matInput
+           [value]="username"
+           (input)="writeValue($event)"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="writeValue($event.option.value)">
+      @for (demoUser of (filteredDemoUsers$ | async); track demoUser.uuid) {
+        <mat-option [value]="demoUser.username" class="option">
+          <p>{{ demoUser.username }}</p>
+          <p>(demo)</p>
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+</div>
+
+
