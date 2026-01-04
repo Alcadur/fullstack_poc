@@ -9,3 +9,15 @@ services:
 #        - db-data: /var/lib/postgresql/data
       ports:
         - 5432:5432
+
+  api_rest:
+    build:
+      context: ./API/rest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/fullstack_poc_db
+      - SPRING_DATASOURCE_USERNAME=adminuser
+      - SPRING_DATASOURCE_PASSWORD=adminpassword
+    depends_on:
+      - database
