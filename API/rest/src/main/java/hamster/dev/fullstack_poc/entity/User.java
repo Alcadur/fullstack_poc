@@ -19,4 +19,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
+    @Getter
+    @Setter
+    private boolean isDemo;
 }
