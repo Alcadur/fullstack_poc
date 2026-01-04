@@ -17,5 +17,5 @@ public class Message extends BaseEntity {
     @Setter
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(nullable = false, updatable = false)
-    private UUID sender;
+    private User sender;
 }
