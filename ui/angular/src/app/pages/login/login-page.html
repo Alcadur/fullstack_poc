@@ -1,11 +1,15 @@
-<form [formGroup]="loginForm" (submit)="handleSubmit()">
-  <demo-user-select formControlName="username" />
-  <mat-form-field>
-    <mat-label>Password</mat-label>
-    <input matInput formControlName="password" type="password">
-  </mat-form-field>
+@defer (on immediate; when userStore.areDemoUsersLoading()) {
+  <form [formGroup]="loginForm" (submit)="handleSubmit()">
+    <demo-user-select formControlName="username" />
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput formControlName="password" type="password">
+    </mat-form-field>
 
-  <div>
-    <button mat-raised-button color="primary" type="submit">Login </button>
-  </div>
-</form>
+    <div>
+      <button mat-raised-button color="primary" type="submit">Login</button>
+    </div>
+  </form>
+} @loading (minimum 1s) {
+  loading...
+}

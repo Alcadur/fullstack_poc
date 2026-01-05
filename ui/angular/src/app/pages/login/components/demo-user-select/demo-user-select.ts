@@ -1,12 +1,12 @@
 import { Component, forwardRef, inject, OnInit } from '@angular/core';
-import { UserHttpService } from '../../../../utils/userHttp.service';
 import { User } from '../../../../models/user.model';
-import { combineLatest, map, Observable, startWith, Subject } from 'rxjs';
+import { map, Observable, startWith, Subject } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { UserStore } from '../../../../stores/user-store/user-store';
 
 @Component({
   selector: 'demo-user-select',
@@ -29,22 +29,21 @@ export class DemoUser implements OnInit, ControlValueAccessor {
   username: string = '';
   usernameChange = new Subject<string>();
 
-  userHttpService = inject(UserHttpService);
-  filteredDemoUsers$: Observable<User[]> | undefined
+  userStore = inject(UserStore);
+  filteredDemoUsers$: Observable<User[]> | undefined;
 
-  propagateChange = (_: any) => {};
+  propagateChange = (_: any) => {
+  };
 
   ngOnInit(): void {
-    this.filteredDemoUsers$ = combineLatest([
-      this.userHttpService.getDemoUsers(),
-      this.usernameChange.pipe(startWith(""))
-    ]).pipe(
-      map(([users, searchTerm]) =>  this.filterUsers(users, searchTerm ?? '')),
+    this.filteredDemoUsers$ = this.usernameChange.pipe(
+      startWith(''),
+      map((searchTerm) => this.filterUsers(this.userStore.demoUsers(), searchTerm ?? '')),
     );
   }
 
-  writeValue(value: string |  Event): void {
-    this.username = typeof value === "string" ? value : (value.target as HTMLInputElement).value;
+  writeValue(value: string | Event): void {
+    this.username = typeof value === 'string' ? value : (value.target as HTMLInputElement).value;
     this.usernameChange.next(this.username);
     this.propagateChange(this.username);
   }
@@ -52,8 +51,12 @@ export class DemoUser implements OnInit, ControlValueAccessor {
   registerOnChange(fn: any): void {
     this.propagateChange = fn;
   }
-  registerOnTouched(fn: any): void {}
-  setDisabledState?(isDisabled: boolean): void {}
+
+  registerOnTouched(fn: any): void {
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+  }
 
 
   private filterUsers(users: User[], searchTerm: string): User[] {
