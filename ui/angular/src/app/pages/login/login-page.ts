@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { UserHttpService } from '../../utils/userHttp.service';
 import { catchError, of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { UserStore } from '../../stores/user-store/user-store';
 
 @Component({
   selector: 'login-page',
@@ -20,7 +21,9 @@ import { HttpErrorResponse } from '@angular/common/http';
   ]
 })
 export class LoginPage {
-  userHttpService = inject(UserHttpService);
+  readonly userHttpService = inject(UserHttpService);
+  readonly userStore = inject(UserStore);
+
 
   loginForm = new FormGroup({
     username: new FormControl("", [Validators.required]),
@@ -36,8 +39,10 @@ export class LoginPage {
       .pipe(
         catchError((error: HttpErrorResponse) => {
           return of(null);
-        })
+        }),
       )
-      .subscribe(user => console.log(user))
+      .subscribe(user => {
+        this.userStore.setUser(user)
+      })
   }
 }
