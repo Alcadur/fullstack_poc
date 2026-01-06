@@ -37,13 +37,14 @@ export class DemoUser implements OnInit, ControlValueAccessor {
 
   ngOnInit(): void {
     this.filteredDemoUsers$ = this.usernameChange.pipe(
-      startWith(''),
+      startWith(this.username),
       map((searchTerm) => this.filterUsers(this.userStore.demoUsers(), searchTerm ?? '')),
     );
   }
 
   writeValue(value: string | Event): void {
     this.username = typeof value === 'string' ? value : (value.target as HTMLInputElement).value;
+    this.username = this.username.trim()
     this.usernameChange.next(this.username);
     this.propagateChange(this.username);
   }
