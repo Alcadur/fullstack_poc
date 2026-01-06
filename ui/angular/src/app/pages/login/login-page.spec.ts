@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TestScheduler } from 'rxjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { HttpErrorResponse } from '@angular/common/http';
+import { SnackBarService } from '@/utils/snackBarService';
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -14,6 +15,7 @@ describe('LoginPage', () => {
   let userStoreMock: any;
   let routerMock: any;
   let scheduler: TestScheduler;
+  let snackBarServiceMock: any;
 
   beforeEach(async () => {
     scheduler = new TestScheduler((actual, expected) => {
@@ -27,13 +29,17 @@ describe('LoginPage', () => {
       loadDemoUsers: vi.fn(),
       setUser: vi.fn()
     };
+    snackBarServiceMock = {
+      error: vi.fn(),
+    }
 
     await TestBed.configureTestingModule({
       imports: [LoginPage, ReactiveFormsModule],
       providers: [
         { provide: UserHttpService, useValue: userHttpServiceMock },
         { provide: UserStore, useValue: userStoreMock },
-        { provide: Router, useValue: routerMock }
+        { provide: Router, useValue: routerMock },
+        { provide: SnackBarService, useValue: snackBarServiceMock }
       ]
     }).compileComponents();
 
@@ -46,7 +52,7 @@ describe('LoginPage', () => {
     expect(userStoreMock.loadDemoUsers).toHaveBeenCalled();
   });
 
-  it('should call login and set user on success (marble diagram)', () => {
+  it('should call login and set user on success', () => {
     scheduler.run(({ cold, expectObservable, flush }) => {
       const mockUser = { id: 1, name: 'Test User' };
 
@@ -64,7 +70,7 @@ describe('LoginPage', () => {
     });
   });
 
-  it('should set user to null on login error (marble diagram)', () => {
+  it('should set user to null on login error and display message', () => {
     scheduler.run(({ cold, flush }) => {
       const errorResponse = new HttpErrorResponse({ status: 401 });
 
@@ -77,6 +83,7 @@ describe('LoginPage', () => {
       flush();
 
       expect(userStoreMock.setUser).toHaveBeenCalledWith(null);
+      expect(snackBarServiceMock.error).toHaveBeenCalledWith(expect.any(String), 5000);
     });
   });
 
