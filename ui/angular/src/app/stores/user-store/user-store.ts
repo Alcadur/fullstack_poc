@@ -1,9 +1,9 @@
-import { User } from '../../models/user.model';
+import { User } from '@/models/user.model';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { computed, inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { of, pipe, switchMap, tap } from 'rxjs';
-import { UserHttpService } from '../../utils/userHttp.service';
+import { UserHttpService } from '@/utils/userHttp.service';
 import { tapResponse } from '@ngrx/operators';
 
 type UserStore = {

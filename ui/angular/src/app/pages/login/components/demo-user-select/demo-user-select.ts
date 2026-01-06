@@ -1,12 +1,12 @@
 import { Component, forwardRef, inject, OnInit } from '@angular/core';
-import { User } from '../../../../models/user.model';
+import { User } from '@/models/user.model';
 import { map, Observable, startWith, Subject } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { UserStore } from '../../../../stores/user-store/user-store';
+import { UserStore } from '@/stores/user-store/user-store';
 
 @Component({
   selector: 'demo-user-select',

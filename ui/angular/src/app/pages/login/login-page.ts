@@ -4,10 +4,10 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { UserHttpService } from '../../utils/userHttp.service';
+import { UserHttpService } from '@/utils/userHttp.service';
 import { catchError, of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserStore } from '../../stores/user-store/user-store';
+import { UserStore } from '@/stores/user-store/user-store';
 import { Router } from '@angular/router';
 
 @Component({

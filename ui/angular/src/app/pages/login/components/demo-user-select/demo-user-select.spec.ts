@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DemoUser } from './demo-user-select';
-import { UserStore } from '../../../../stores/user-store/user-store';
-import { User } from '../../../../models/user.model';
+import { UserStore } from '@/stores/user-store/user-store';
+import { User } from '@/models/user.model';
 import { signal } from '@angular/core';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
