@@ -1,0 +1,17 @@
+@keyframes timerAnimation {
+  0% { width: 100%; }
+  100% { width: 0; }
+}
+
+.timer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: lab(from var(--main-bar-coloe) l a calc(b + 40));
+  border-radius: var(--mat-snack-bar-container-shape, var(--mat-sys-corner-extra-small));
+
+  animation: timerAnimation attr(data-duration ms) linear forwards;
+  animation-play-state: running;
+}

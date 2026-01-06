@@ -1,1 +1,21 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  .custom-snack-bar-error {
+    --main-bar-coloe: #bf005c;
+  }
+
+  .custom-snack-bar-success {
+    --main-bar-coloe: #347c00;
+  }
+
+  .custom-snack-bar-info {
+    --main-bar-coloe: #0b2bac;
+  }
+
+  .custom-snack-bar {
+    --mat-snack-bar-supporting-text-color: hsl(from var(--main-bar-coloe) h s l);
+    --mat-snack-bar-container-color: hsl(from var(--main-bar-coloe) h s l / 60%);
+
+    box-shadow: 0 0 0 5px hsl(from var(--main-bar-coloe) h s l / 20%);
+    border-radius: var(--mat-snack-bar-container-shape, var(--mat-sys-corner-extra-small));
+  }
+}
