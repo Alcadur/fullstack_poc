@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +46,9 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(mapper::toDto);
+    }
+
+    public Optional<User> findByUuid(UUID uuid) {
+        return userRepository.findByUuid(uuid);
     }
 }
