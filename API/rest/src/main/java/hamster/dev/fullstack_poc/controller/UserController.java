@@ -7,7 +7,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api")
@@ -25,7 +31,14 @@ public class UserController {
     public ResponseEntity<UserDTO> login(@RequestBody LoginDTO loginRequest, HttpSession session) {
         return userService.login(loginRequest.getUsername(), loginRequest.getPassword())
                 .map(user -> {
-                    session.setAttribute("user", user);
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(
+                            user, null, Collections.emptyList());
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                            SecurityContextHolder.getContext());
+
                     return ResponseEntity.ok(user);
                 })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
