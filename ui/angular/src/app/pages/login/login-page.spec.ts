@@ -8,6 +8,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SnackBarService } from '@/utils/snackBarService';
+import { RoutesList } from '@/routes.model';
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -31,10 +32,14 @@ describe('LoginPage', () => {
       setUser: vi.fn(),
       getDemoUserByUsername: vi.fn(),
       areDemoUsersLoading: vi.fn(),
+      demoUsers: vi.fn().mockReturnValue([])
     };
     snackBarServiceMock = {
       error: vi.fn(),
     };
+    routerMock = {
+      navigate: vi.fn()
+    }
 
     await TestBed.configureTestingModule({
       imports: [LoginPage, ReactiveFormsModule],
@@ -55,7 +60,7 @@ describe('LoginPage', () => {
     expect(userStoreMock.loadDemoUsers).toHaveBeenCalled();
   });
 
-  it('should call login and set user on success', () => {
+  it('should call login, set user on success and redirect to tasks', () => {
     scheduler.run(({ cold, expectObservable, flush }) => {
       const mockUser = { id: 1, name: 'Test User' };
 
@@ -70,6 +75,7 @@ describe('LoginPage', () => {
 
       expect(userHttpServiceMock.login).toHaveBeenCalledWith('test', 'password');
       expect(userStoreMock.setUser).toHaveBeenCalledWith(mockUser);
+      expect(routerMock.navigate).toHaveBeenCalledWith([RoutesList.TASKS]);
     });
   });
 

@@ -9,6 +9,7 @@ import { catchError, of } from 'rxjs';
 import { UserStore } from '@/stores/user-store/user-store';
 import { Router } from '@angular/router';
 import { SnackBarService } from '@/utils/snackBarService';
+import { RoutesList } from '@/routes.model';
 
 export const DEMO_USERS_PASSWORD = '$trongPassword.123!';
 
@@ -53,6 +54,10 @@ export class LoginPage implements OnInit {
       )
       .subscribe(user => {
         this.userStore.setUser(user);
+
+        if (user) {
+          this.router.navigate([RoutesList.TASKS]);
+        }
       });
   }
 
