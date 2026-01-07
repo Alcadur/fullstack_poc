@@ -1,5 +1,5 @@
-import { TestBed } from '@angular/core/testing';
-import { LoginPage } from './login-page';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DEMO_USERS_PASSWORD, LoginPage } from './login-page';
 import { UserHttpService } from '@/utils/userHttp.service';
 import { UserStore } from '@/stores/user-store/user-store';
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ describe('LoginPage', () => {
   let routerMock: any;
   let scheduler: TestScheduler;
   let snackBarServiceMock: any;
+  let fixture: ComponentFixture<LoginPage>;
 
   beforeEach(async () => {
     scheduler = new TestScheduler((actual, expected) => {
@@ -27,11 +28,13 @@ describe('LoginPage', () => {
     };
     userStoreMock = {
       loadDemoUsers: vi.fn(),
-      setUser: vi.fn()
+      setUser: vi.fn(),
+      getDemoUserByUsername: vi.fn(),
+      areDemoUsersLoading: vi.fn(),
     };
     snackBarServiceMock = {
       error: vi.fn(),
-    }
+    };
 
     await TestBed.configureTestingModule({
       imports: [LoginPage, ReactiveFormsModule],
@@ -43,7 +46,7 @@ describe('LoginPage', () => {
       ]
     }).compileComponents();
 
-    const fixture = TestBed.createComponent(LoginPage);
+    fixture = TestBed.createComponent(LoginPage);
     component = fixture.componentInstance;
   });
 
@@ -92,5 +95,14 @@ describe('LoginPage', () => {
     component.handleSubmit();
 
     expect(userHttpServiceMock.login).not.toHaveBeenCalled();
+  });
+
+  it('should set password to DEMO_USERS_PASSWORD if username is a demo user', () => {
+    fixture.detectChanges();
+
+    userStoreMock.getDemoUserByUsername.mockReturnValue({ username: 'test' });
+    component.loginForm.controls.username.setValue('test');
+
+    expect(component.loginForm.value.password).toBe(DEMO_USERS_PASSWORD);
   });
 });

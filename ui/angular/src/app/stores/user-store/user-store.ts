@@ -31,6 +31,9 @@ export const UserStore = signalStore(
     setUser(user: User | null): void {
       patchState(store, { user });
     },
+    getDemoUserByUsername(username: string): User | undefined {
+      return store.demoUsers().find(user => user.username === username);
+    },
     loadDemoUsers: rxMethod<void | boolean>(
       pipe(
         switchMap((forceRefetch?: void | boolean) => {

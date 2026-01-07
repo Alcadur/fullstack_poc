@@ -10,9 +10,11 @@ import { UserStore } from '@/stores/user-store/user-store';
 import { Router } from '@angular/router';
 import { SnackBarService } from '@/utils/snackBarService';
 
+export const DEMO_USERS_PASSWORD = '$trongPassword.123!';
+
 @Component({
   selector: 'login-page',
-  templateUrl: 'login-page.html',
+  templateUrl: './login-page.html',
   imports: [
     DemoUser,
     ReactiveFormsModule,
@@ -27,14 +29,15 @@ export class LoginPage implements OnInit {
   readonly snackBarService = inject(SnackBarService);
   readonly router = inject(Router);
 
-  ngOnInit(): void {
-    this.userStore.loadDemoUsers();
-  }
-
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required])
   });
+
+  ngOnInit(): void {
+    this.userStore.loadDemoUsers();
+    this.loginForm.controls.username.valueChanges.subscribe((username) => this.autoSetPasswordForDemoUser(username));
+  }
 
   handleSubmit() {
     if (!this.loginForm.valid) {
@@ -51,5 +54,15 @@ export class LoginPage implements OnInit {
       .subscribe(user => {
         this.userStore.setUser(user);
       });
+  }
+
+  private autoSetPasswordForDemoUser(username: string | null) {
+    if (username === null) {
+      return;
+    }
+
+    if (this.userStore.getDemoUserByUsername(username)) {
+      this.loginForm.patchValue({ password: DEMO_USERS_PASSWORD });
+    }
   }
 }
