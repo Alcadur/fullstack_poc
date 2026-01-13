@@ -27,7 +27,7 @@ public class DataLoader implements CommandLineRunner {
         taskService.createTask(Bella, "Tidying up the garden", "- sweep the leaves, - replant the flowers, - wash the greenhouse");
 
         User Alice = userService.createDemoUser("Alicia", "$trongPassword.123!");
-        taskService.createTask(Alice, "Cleaning the bathroom", "-scrub the sink, -wipe the mirrors, -mop the floor");
+        taskService.createTask(Alice, "Cleaning the bathroom", "-scrub the sink, -wipe the mirrors, -mop the floor", true);
         taskService.createTask(Alice, "Organizing the closet", "-sort the clothes, -fold the towels, -put away the shoes");
         taskService.createTask(Alice, "Clean the kitchen", "-wipe the counters, -wash the dishes, -vacuum the floor");
 
@@ -40,6 +40,14 @@ public class DataLoader implements CommandLineRunner {
         messageService.sendMessage(Alice, "I'm doing well, thanks for asking!");
         messageService.sendMessage(Tyrell, "Hey Alice, do you want to join me for a party this weekend?");
         messageService.sendMessage(Alice, "Sure, that sounds like fun!");
+
+        User User500 = userService.createDemoUser("User500", "$trongPassword.123!");
+        for (int i = 0; i < 100; i++) {
+            taskService.createTask(User500, "Task to have bo done " + i, "Content " + i);
+        }
+        for (int i = 0; i < 400; i++) {
+            taskService.createTask(User500, "Completed task " + i, "Completed content " + i, true);
+        }
     }
 }
 
