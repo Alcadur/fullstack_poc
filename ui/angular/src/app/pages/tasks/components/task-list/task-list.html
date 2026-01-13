@@ -1,0 +1,9 @@
+<section class="task-list-wrapper">
+  @for (task of tasks(); track task.uuid) {
+    @defer (on viewport) {
+      <task-list-row [task]="task" />
+    } @placeholder {
+      <span></span>
+    }
+  }
+</section>
