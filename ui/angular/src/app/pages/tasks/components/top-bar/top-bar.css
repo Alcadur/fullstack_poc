@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  max-width: inherit;
+  width: inherit;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  box-shadow: 0 15px 10px -15px #111;
+  justify-content: center;
+}
