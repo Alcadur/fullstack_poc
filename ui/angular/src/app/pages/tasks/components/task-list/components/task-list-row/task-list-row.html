@@ -1,0 +1,21 @@
+@let task = this.task();
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title> {{ task.title }} </mat-panel-title>
+    <mat-panel-description>
+      <mat-button-toggle-group
+        name="completed"
+        aria-label="Favorite Color"
+        [hideSingleSelectionIndicator]="true"
+        [value]="task.completed"
+      >
+        @if (task.completed) {
+          <mat-button-toggle [value]="true" (click)="toggleCompleted($event)">✅</mat-button-toggle>
+        } @else {
+          <mat-button-toggle [value]="false" (click)="toggleCompleted($event)">❌</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <p>{{ task.description }}</p>
+</mat-expansion-panel>
