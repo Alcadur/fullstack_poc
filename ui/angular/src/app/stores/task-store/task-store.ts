@@ -1,35 +1,84 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap } from 'rxjs';
+import { debounceTime, pipe, switchMap, tap } from 'rxjs';
 import { inject } from '@angular/core';
-import { UserHttpService } from '@/utils/userHttp.service';
 import { tapResponse } from '@ngrx/operators';
+import { Task } from '@/models/task.model';
+import { TaskHttpService } from '@/utils/taskHttp.service';
+import {
+  addEntities,
+  removeAllEntities,
+  SelectEntityId,
+  setEntities,
+  updateEntity,
+  withEntities
+} from '@ngrx/signals/entities';
 
 type TaskStore = {
-  areTasksLoading: boolean,
-  tasks: any[]
+  areToDoTasksLoading: boolean,
+  areCompletedTasksLoading: boolean,
 }
 
 const initialState: TaskStore = {
-  areTasksLoading: false,
-  tasks: []
+  areToDoTasksLoading: false,
+  areCompletedTasksLoading: false,
 };
+
+const selectId: SelectEntityId<Task> = (todo) => todo.uuid;
 
 export const TaskStore = signalStore(
   { providedIn: 'root', protectedState: true },
   withState(initialState),
+  withEntities<Task>(),
   withMethods(
-    (store, httpService = inject(UserHttpService)) =>
+    (store, httpService = inject(TaskHttpService)) =>
       ({
-        loadTasks: rxMethod<string>(
+        loadToDoTasks: rxMethod<void>(
           pipe(
-            pipe(tap(() => patchState(store, { areTasksLoading: true }))),
-            switchMap((userUuid: string) => httpService.getAllTasksByAuthorUuid(userUuid)),
-            tap(tasks => console.log("tasks", tasks)),
+            pipe(tap(() => patchState(store, { areToDoTasksLoading: true }))),
+            switchMap(() => httpService.getLoggedInUserTasksByCompleted(false)),
             tapResponse({
-              next: tasks => patchState(store, { tasks }),
-              error: () => patchState(store, { tasks: [] }),
-              finalize: () => patchState(store, { areTasksLoading: false })
+              next: tasks => patchState(store, setEntities(tasks, { selectId })),
+              error: () => patchState(store, removeAllEntities()),
+              finalize: () => patchState(store, { areToDoTasksLoading: false })
+            })
+          )
+        ),
+        loadCompetedTasks: rxMethod<string>(
+          pipe(
+            pipe(tap(() => patchState(store, { areCompletedTasksLoading: true }))),
+            switchMap(() => httpService.getLoggedInUserTasksByCompleted(true)),
+            tapResponse({
+              next: tasks => patchState(store, addEntities(tasks, { selectId })),
+              error: () => null,
+              finalize: () => patchState(store, { areCompletedTasksLoading: false })
+            })
+          )
+        ),
+        toggleTaskCompleted: rxMethod<[string, boolean]>(
+          pipe(
+            tap(([taskUuid, completed]) => {
+              let tasks: Task[] = store.entities();
+
+              const task = tasks.find(task => task.uuid === taskUuid);
+
+              if (!task) {
+                throw new Error(`Task with UUID ${taskUuid} not found`);
+              }
+
+              patchState(store, updateEntity({
+                  id: taskUuid,
+                  changes: () => ({ completed }),
+                }, { selectId })
+              );
+            }),
+            debounceTime(1000),
+            switchMap(([taskUuid, completed]) =>
+              httpService.toggleTaskCompleted(taskUuid, completed)
+            ),
+            tapResponse({
+              next: () => patchState(store, { areToDoTasksLoading: false }),
+              error: () => patchState(store, { areToDoTasksLoading: false })
             })
           )
         )
