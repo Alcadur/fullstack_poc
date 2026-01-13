@@ -18,6 +18,10 @@ export class UserHttpService {
     return this.httpClient.post<User>("/api/login", {username, password})
   }
 
+  logout(): Observable<void> {
+    return this.httpClient.post<void>("/api/logout", null)
+  }
+
   getAllTasksByAuthorUuid(uuid: string): Observable<Task[]> {
     return this.httpClient.get<Task[]>(`/api/tasks/user/${uuid}`)
   }

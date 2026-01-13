@@ -1,4 +1,6 @@
 :root {
+  --md-breakpoint: 600px;
+
   .custom-snack-bar-error {
     --main-bar-coloe: #bf005c;
   }
