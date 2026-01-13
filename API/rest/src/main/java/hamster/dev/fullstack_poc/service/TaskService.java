@@ -8,6 +8,9 @@ import hamster.dev.fullstack_poc.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -15,14 +18,44 @@ public class TaskService {
     private final TaskDtoMapper mapper;
 
     public void createTask(User author, String title, String description) {
+        createTask(author, title, description, false);
+    }
+
+    public void createTask(User author, String title, String description, boolean completed) {
         Task task = new Task();
         task.setTitle(title);
         task.setDescription(description);
         task.setAuthor(author);
+        task.setCompleted(completed);
         taskRepository.save(task);
     }
 
+    public TaskDTO[] getTodoTasksByAuthor(User user) {
+        return taskRepository.findAllByAuthorAndCompleted(user, false)
+                .stream()
+                .map(mapper::toDto)
+                .toArray(TaskDTO[]::new);
+    }
+
+    public TaskDTO[] getCompletedTasksByAuthor(User user) {
+        return taskRepository.findAllByAuthorAndCompleted(user, true)
+                .stream()
+                .map(mapper::toDto)
+                .toArray(TaskDTO[]::new);
+    }
+
     public TaskDTO[] getAllTasksByAuthor(User user) {
-        return taskRepository.findAllByAuthor(user).stream().map(mapper::toDto).toArray(TaskDTO[]::new);
+        return taskRepository.findAllByAuthorOrderByCompleted(user)
+                .stream()
+                .map(mapper::toDto)
+                .toArray(TaskDTO[]::new);
+    }
+
+    public Optional<TaskDTO> updateTaskStatus(UUID taskUuid, UUID userUuid, boolean completed) {
+        return taskRepository.findByUuidAndAuthorUuid(taskUuid, userUuid)
+                .map(task -> {
+                    task.setCompleted(completed);
+                    return mapper.toDto(taskRepository.save(task));
+                });
     }
 }

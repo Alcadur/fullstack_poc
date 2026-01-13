@@ -26,4 +26,29 @@ public class TaskController {
                 .map(user -> ResponseEntity.ok(taskService.getAllTasksByAuthor(user)))
                 .orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
+
+    @GetMapping("/user/{userUuid}/todo")
+    public ResponseEntity<TaskDTO[]> getUserTodoTasks(@PathVariable("userUuid") UUID userId) {
+        return userService.findByUuid(userId)
+                .map(user -> ResponseEntity.ok(taskService.getTodoTasksByAuthor(user)))
+                .orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
+
+    @GetMapping("/user/{userUuid}/completed")
+    public ResponseEntity<TaskDTO[]> getUserCompletedTasks(@PathVariable("userUuid") UUID userId) {
+        return userService.findByUuid(userId)
+                .map(user -> ResponseEntity.ok(taskService.getCompletedTasksByAuthor(user)))
+                .orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
+
+    @PatchMapping("/user/{userUuid}/{taskUuid}")
+    public ResponseEntity<TaskDTO> updateTaskStatus(
+            @PathVariable("userUuid") UUID userId,
+            @PathVariable("taskUuid") UUID taskUuid,
+            @RequestBody boolean completed
+    ) {
+        return taskService.updateTaskStatus(taskUuid, userId, completed)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
