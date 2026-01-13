@@ -11,8 +11,7 @@ This is a simple "TODO list" application that demonstrates my skills in differen
 
     1. If you don't have a docker installed, I strongly recommend you to install it :). 
 
-    2. You can also set up DB and build API manually. All necessary data should be in `docker-compose.yml` 
-3. For now FE needs to be run manually, to do so run `npm run start` in `ui/angular` directory.
+    2. You can also set up DB and build API manually. All necessary data should be in `docker-compose.yml`
 
 ### What is missing?
 Please take note that this is Proof of Concept, and I am aware of the luck of security. I will "fix" that after I finished the main goal.

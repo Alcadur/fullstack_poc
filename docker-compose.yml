@@ -5,8 +5,6 @@ services:
         POSTGRES_USER: adminuser
         POSTGRES_PASSWORD: adminpassword
         POSTGRES_DB: fullstack_poc_db
-#      volumes:
-#        - db-data: /var/lib/postgresql/data
       ports:
         - 5432:5432
 
@@ -21,3 +19,11 @@ services:
       - SPRING_DATASOURCE_PASSWORD=adminpassword
     depends_on:
       - database
+
+  ui_angular:
+    build:
+      context: ./ui/angular
+    ports:
+      - "4200:80"
+    depends_on:
+      - api_rest
