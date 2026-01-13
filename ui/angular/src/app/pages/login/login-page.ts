@@ -16,6 +16,7 @@ export const DEMO_USERS_PASSWORD = '$trongPassword.123!';
 @Component({
   selector: 'login-page',
   templateUrl: './login-page.html',
+  styleUrls: ['./login-page.css'],
   imports: [
     DemoUser,
     ReactiveFormsModule,

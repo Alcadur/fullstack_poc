@@ -1,6 +1,5 @@
 .main {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: clamp(300px, 100vw, 1500px);
+  margin: 0 auto;
 }
