@@ -43,13 +43,13 @@ export const UserStore = signalStore(
 
           return userHttpService.getDemoUsers().pipe(
             tap(() => patchState(store, { areDemoUsersLoading: true })),
+            tapResponse({
+              next: demoUsers => patchState(store, { demoUsers }),
+              error: () => patchState(store, { demoUsers: [] }),
+              finalize: () => patchState(store, { areDemoUsersLoading: false })
+            })
           );
         }),
-        tapResponse({
-          next: demoUsers => patchState(store, { demoUsers }),
-          error: () => patchState(store, { demoUsers: [] }),
-          finalize: () => patchState(store, { areDemoUsersLoading: false })
-        })
       )
     )
   }))
