@@ -1,0 +1,269 @@
+import { TestBed } from '@angular/core/testing';
+import { TaskStore } from './task-store';
+import { TaskHttpService } from '@/utils/taskHttp.service';
+import { Task } from '@/models/task.model';
+import { schedulerFactory } from '@/utils/test-helpers';
+import { of, throwError } from 'rxjs';
+
+describe('TaskStore', () => {
+  let store: InstanceType<typeof TaskStore>;
+  let mockHttpService: any;
+
+  const mockToDoTasks: Task[] = [
+    { uuid: '1', title: 'Task 1', description: 'Description 1', completed: false },
+    { uuid: '2', title: 'Task 2', description: 'Description 2', completed: false },
+  ];
+
+  const mockCompletedTasks: Task[] = [
+    { uuid: '3', title: 'Task 3', description: 'Description 3', completed: true },
+    { uuid: '4', title: 'Task 4', description: 'Description 4', completed: true },
+  ];
+
+  beforeEach(() => {
+    mockHttpService = {
+      getLoggedInUserTasksByCompleted: vi.fn(),
+      toggleTaskCompleted: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        TaskStore,
+        { provide: TaskHttpService, useValue: mockHttpService },
+      ],
+    });
+
+    store = TestBed.inject(TaskStore);
+  });
+
+  describe('Initial State', () => {
+    it('should have initial state with no tasks and loading flags set to false', () => {
+      expect(store.areToDoTasksLoading()).toBe(false);
+      expect(store.areCompletedTasksLoading()).toBe(false);
+      expect(store.entities()).toEqual([]);
+      expect(store.ids()).toEqual([]);
+    });
+  });
+
+  describe('loadToDoTasks', () => {
+    it('should set areToDoTasksLoading to true while loading', () => {
+      schedulerFactory(expect).run(({ cold, flush }) => {
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(cold('--x--a|', { x: null, a: mockToDoTasks }));
+
+        store.loadToDoTasks();
+
+        expect(store.areToDoTasksLoading()).toBe(true);
+        flush();
+        expect(store.areToDoTasksLoading()).toBe(false);
+      });
+    });
+
+    it('should load to-do tasks successfully and set entities', () => {
+      mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockToDoTasks));
+
+      store.loadToDoTasks();
+
+      expect(mockHttpService.getLoggedInUserTasksByCompleted).toHaveBeenCalledWith(false);
+      expect(store.entities()).toEqual(mockToDoTasks);
+      expect(store.ids()).toEqual(['1', '2']);
+      expect(store.areToDoTasksLoading()).toBe(false);
+    });
+
+    it('should remove all entities on error', () => {
+      mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(
+        throwError(() => new Error('Network error'))
+      );
+
+      store.loadToDoTasks();
+
+      expect(store.entities()).toEqual([]);
+      expect(store.ids()).toEqual([]);
+      expect(store.areToDoTasksLoading()).toBe(false);
+    });
+
+    it('should replace existing entities with new tasks', () => {
+      schedulerFactory(expect).run(({ cold, flush }) => {
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(cold('a|', { a: mockToDoTasks }));
+
+        store.loadToDoTasks();
+        flush();
+
+        expect(store.entities()).toEqual(mockToDoTasks);
+
+        const newTasks: Task[] = [
+          { uuid: '5', title: 'Task 5', description: 'Description 5', completed: false },
+        ];
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(cold('a|', { a: newTasks }));
+        store.loadToDoTasks();
+        flush();
+
+        expect(store.entities()).toEqual(newTasks);
+        expect(store.ids()).toEqual(['5']);
+      });
+    });
+
+    describe('loadCompetedTasks', () => {
+      it('should set areCompletedTasksLoading to true while loading', () => {
+        schedulerFactory(expect).run(({ cold, flush }) => {
+          mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(cold('--x--a|', {
+            x: null,
+            a: mockToDoTasks
+          }));
+
+          store.loadCompetedTasks();
+
+          expect(store.areCompletedTasksLoading()).toBe(true);
+
+          flush();
+          expect(store.areCompletedTasksLoading()).toBe(false);
+        });
+      });
+
+      it('should load completed tasks successfully and add entities', () => {
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockToDoTasks));
+        store.loadToDoTasks();
+
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockCompletedTasks));
+        store.loadCompetedTasks();
+
+        expect(mockHttpService.getLoggedInUserTasksByCompleted).toHaveBeenCalledWith(true);
+        expect(store.entities().length).toBe(4);
+        expect(store.ids()).toEqual(['1', '2', '3', '4']);
+        expect(store.areCompletedTasksLoading()).toBe(false);
+      });
+
+      it('should not modify entities on error', () => {
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockToDoTasks));
+        store.loadToDoTasks();
+
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(
+          throwError(() => new Error('Network error'))
+        );
+        store.loadCompetedTasks();
+
+        expect(store.entities()).toEqual(mockToDoTasks);
+        expect(store.areCompletedTasksLoading()).toBe(false);
+      });
+    });
+
+    describe('toggleTaskCompleted', () => {
+      beforeAll(() => {
+        vi.useFakeTimers();
+      });
+
+      afterAll(() => {
+        vi.useRealTimers();
+      });
+
+      beforeEach(() => {
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockToDoTasks));
+        store.loadToDoTasks();
+      });
+
+      it('should update task completed status immediately', () => {
+        mockHttpService.toggleTaskCompleted.mockReturnValue(
+          of({ ...mockToDoTasks[0], completed: true })
+        );
+
+        store.toggleTaskCompleted(['1', true]);
+
+        const task = store.entityMap()['1'];
+        expect(task.completed).toBe(true);
+      });
+
+      it('should set areToDoTasksLoading to false on HTTP error', () => {
+        mockHttpService.toggleTaskCompleted.mockReturnValue(
+          throwError(() => new Error('Network error'))
+        );
+
+        store.toggleTaskCompleted(['1', true]);
+        vi.advanceTimersByTime(1000);
+
+        expect(store.areToDoTasksLoading()).toBe(false);
+      });
+
+      it('should throw error when task is not found', () => {
+        expect(() => {
+          store.toggleTaskCompleted(['non-existent-uuid', true]);
+          vi.advanceTimersByTime(1000);
+        }).toThrowError('Task with UUID non-existent-uuid not found');
+      });
+
+      it('should update multiple tasks independently', () => {
+        mockHttpService.toggleTaskCompleted.mockReturnValue(
+          of({ ...mockToDoTasks[0], completed: true })
+        );
+
+        store.toggleTaskCompleted(['1', true]);
+        vi.advanceTimersByTime(1000);
+
+        mockHttpService.toggleTaskCompleted.mockReturnValue(
+          of({ ...mockToDoTasks[1], completed: true })
+        );
+
+        store.toggleTaskCompleted(['2', true]);
+        vi.advanceTimersByTime(1000);
+
+        expect(store.entityMap()['1'].completed).toBe(true);
+        expect(store.entityMap()['2'].completed).toBe(true);
+        expect(mockHttpService.toggleTaskCompleted).toHaveBeenCalledTimes(2);
+      });
+
+      it('should toggle task from completed to uncompleted', () => {
+        mockHttpService.toggleTaskCompleted.mockReturnValue(
+          of({ ...mockToDoTasks[0], completed: true })
+        );
+
+        store.toggleTaskCompleted(['1', true]);
+        vi.advanceTimersByTime(1000);
+
+        mockHttpService.toggleTaskCompleted.mockReturnValue(
+          of({ ...mockToDoTasks[0], completed: false })
+        );
+
+        store.toggleTaskCompleted(['1', false]);
+        vi.advanceTimersByTime(1000);
+
+        expect(store.entityMap()['1'].completed).toBe(false);
+        expect(mockHttpService.toggleTaskCompleted).toHaveBeenCalledWith('1', false);
+      });
+    });
+
+    describe('Integration scenarios', () => {
+
+      beforeEach(() => {
+        vi.useFakeTimers();
+      });
+
+      afterAll(() => {
+        vi.useRealTimers();
+      });
+
+      it('should handle loading both to-do and completed tasks', () => {
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockToDoTasks));
+        store.loadToDoTasks();
+
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockCompletedTasks));
+        store.loadCompetedTasks();
+
+        expect(store.entities().length).toBe(4);
+        expect(store.ids()).toEqual(['1', '2', '3', '4']);
+      });
+
+      it('should maintain entity state after toggle', () => {
+        mockHttpService.getLoggedInUserTasksByCompleted.mockReturnValue(of(mockToDoTasks));
+        store.loadToDoTasks();
+
+        mockHttpService.toggleTaskCompleted.mockReturnValue(
+          of({ ...mockToDoTasks[0], completed: true })
+        );
+
+        store.toggleTaskCompleted(['1', true]);
+        vi.advanceTimersByTime(1000);
+
+        expect(store.entities().length).toBe(2);
+        expect(store.entityMap()['1'].title).toBe('Task 1');
+        expect(store.entityMap()['1'].description).toBe('Description 1');
+      });
+    });
+  });
+});

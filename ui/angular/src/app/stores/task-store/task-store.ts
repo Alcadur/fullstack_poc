@@ -9,7 +9,7 @@ import {
   addEntities,
   removeAllEntities,
   SelectEntityId,
-  setEntities,
+  setAllEntities,
   updateEntity,
   withEntities
 } from '@ngrx/signals/entities';
@@ -36,23 +36,25 @@ export const TaskStore = signalStore(
         loadToDoTasks: rxMethod<void>(
           pipe(
             pipe(tap(() => patchState(store, { areToDoTasksLoading: true }))),
-            switchMap(() => httpService.getLoggedInUserTasksByCompleted(false)),
-            tapResponse({
-              next: tasks => patchState(store, setEntities(tasks, { selectId })),
-              error: () => patchState(store, removeAllEntities()),
-              finalize: () => patchState(store, { areToDoTasksLoading: false })
-            })
+            switchMap(() => httpService.getLoggedInUserTasksByCompleted(false).pipe(
+              tapResponse({
+                next: tasks => patchState(store, setAllEntities(tasks, { selectId })),
+                error: () => patchState(store, removeAllEntities()),
+                finalize: () => patchState(store, { areToDoTasksLoading: false })
+              })
+            )),
           )
         ),
-        loadCompetedTasks: rxMethod<string>(
+        loadCompetedTasks: rxMethod<void>(
           pipe(
             pipe(tap(() => patchState(store, { areCompletedTasksLoading: true }))),
-            switchMap(() => httpService.getLoggedInUserTasksByCompleted(true)),
-            tapResponse({
-              next: tasks => patchState(store, addEntities(tasks, { selectId })),
-              error: () => null,
-              finalize: () => patchState(store, { areCompletedTasksLoading: false })
-            })
+            switchMap(() => httpService.getLoggedInUserTasksByCompleted(true).pipe(
+              tapResponse({
+                next: tasks => patchState(store, addEntities(tasks, { selectId })),
+                error: () => null,
+                finalize: () => patchState(store, { areCompletedTasksLoading: false })
+              })
+            )),
           )
         ),
         toggleTaskCompleted: rxMethod<[string, boolean]>(
@@ -74,12 +76,13 @@ export const TaskStore = signalStore(
             }),
             debounceTime(1000),
             switchMap(([taskUuid, completed]) =>
-              httpService.toggleTaskCompleted(taskUuid, completed)
+              httpService.toggleTaskCompleted(taskUuid, completed).pipe(
+                tapResponse({
+                  next: () => patchState(store, { areToDoTasksLoading: false }),
+                  error: () => patchState(store, { areToDoTasksLoading: false })
+                })
+              )
             ),
-            tapResponse({
-              next: () => patchState(store, { areToDoTasksLoading: false }),
-              error: () => patchState(store, { areToDoTasksLoading: false })
-            })
           )
         )
       })
