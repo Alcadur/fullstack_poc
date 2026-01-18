@@ -1,0 +1,17 @@
+@keyframes time-animation {
+    from { width: 100%; }
+    to { width: 0; }
+}
+
+
+.timeBar {
+    --duration: var(--duration, 2s);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5px;
+    background-color: #007bff;
+    opacity: 0.5;
+    animation: time-animation var(--duration) linear forwards running;
+}
