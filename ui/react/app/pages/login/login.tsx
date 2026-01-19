@@ -5,7 +5,7 @@ import { useLoaderData } from "react-router";
 import { UsernameField } from "./components/username-field";
 
 import useDebounce from "@/hooks/use-debounce";
-import { userService } from "@/service/user-http.service";
+import { userHttpService } from "@/service/user-http.service";
 import { useState } from "react";
 import { CustomSnackbar } from "@/components/custom-snackbar/custom-snackbar";
 import { useCustomSnackbarControl } from "@/components/custom-snackbar/use-custom-snackbar-control";
@@ -40,7 +40,7 @@ export function Login() {
     const handleLogin: SubmitHandler<ILoginForm> = async (data) => {
         setIsLoggingIn(true);
         try {
-            await userService.login(data);
+            await userHttpService.login(data);
         } catch (e) {
             snackbarControl.error();
         }

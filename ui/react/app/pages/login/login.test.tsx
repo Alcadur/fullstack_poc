@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DEMO_USERS_PASSWORD, Login } from "./login";
-import { userService } from "@/service/user-http.service";
+import { userHttpService } from "@/service/user-http.service";
 import "@testing-library/jest-dom";
 import { useLoaderData } from "react-router";
 import { useCustomSnackbarControl } from "@/components/custom-snackbar/use-custom-snackbar-control";
@@ -11,7 +11,7 @@ jest.mock("react-router", () => ({
 }));
 
 jest.mock("@/service/user-http.service", () => ({
-    userService: {
+    userHttpService: {
         login: jest.fn(),
     },
 }));
@@ -64,7 +64,7 @@ describe("Login Component", () => {
         };
         (useLoaderData as jest.Mock).mockReturnValue(mockDemoUsers);
         (useCustomSnackbarControl as jest.Mock).mockReturnValue(mockSnackbarControl);
-        mockLogin = userService.login as jest.Mock;
+        mockLogin = userHttpService.login as jest.Mock;
     });
 
     describe("Rendering", () => {
@@ -92,7 +92,7 @@ describe("Login Component", () => {
             await fillForm("testuser", "testpassword", true);
 
             await waitFor(() => {
-                expect(userService.login).toHaveBeenCalledWith({
+                expect(userHttpService.login).toHaveBeenCalledWith({
                     username: "testuser",
                     password: "testpassword",
                 });
@@ -112,13 +112,13 @@ describe("Login Component", () => {
             await fillForm("testuser", "testpassword", true);
 
             await waitFor(() => {
-                expect(userService.login).toHaveBeenCalled();
+                expect(userHttpService.login).toHaveBeenCalled();
             });
 
             resolveLogin({ ok: true });
 
             await waitFor(() => {
-                expect(userService.login).toHaveBeenCalledTimes(1);
+                expect(userHttpService.login).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -129,7 +129,7 @@ describe("Login Component", () => {
             const loginButton = screen.getByRole("button", { name: /login/i });
             await user.click(loginButton);
 
-            expect(userService.login).not.toHaveBeenCalled();
+            expect(userHttpService.login).not.toHaveBeenCalled();
         });
     });
 
@@ -173,7 +173,7 @@ describe("Login Component", () => {
 
             // Should be able to submit again
             await user.click(loginButton);
-            expect(userService.login).toHaveBeenCalledTimes(2);
+            expect(userHttpService.login).toHaveBeenCalledTimes(2);
         });
     });
 

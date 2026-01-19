@@ -1,5 +1,5 @@
 import { jest } from "@jest/globals";
-import { userService } from "./user-http.service";
+import { userHttpService } from "./user-http.service";
 import { httpService } from "./http.service";
 import { queryClient } from "@/utils/query-client";
 import { apiEndpoints } from "@/api-endpoints";
@@ -45,7 +45,7 @@ describe("UserService", () => {
             mockGet.mockResolvedValue(mockResponse as Response);
             mockFetchQuery.mockResolvedValue(mockUsers);
 
-            const result = await userService.getDemoUsers();
+            const result = await userHttpService.getDemoUsers();
 
             expect(queryClient.fetchQuery).toHaveBeenCalledWith({
                 queryKey: ["demo-users"],
@@ -64,7 +64,7 @@ describe("UserService", () => {
                 return capturedQueryFn();
             });
 
-            await userService.getDemoUsers();
+            await userHttpService.getDemoUsers();
 
             expect(capturedQueryFn).toBeDefined();
             expect(httpService.get).toHaveBeenCalledWith(apiEndpoints.DEMO_USERS);
@@ -74,7 +74,7 @@ describe("UserService", () => {
             const mockError = new Error("Failed to fetch users");
             mockFetchQuery.mockRejectedValue(mockError);
 
-            await expect(userService.getDemoUsers()).rejects.toThrow("Failed to fetch users");
+            await expect(userHttpService.getDemoUsers()).rejects.toThrow("Failed to fetch users");
         });
     });
 
@@ -98,7 +98,7 @@ describe("UserService", () => {
 
             mockPost.mockResolvedValue(mockResponse as Response);
 
-            const result = await userService.login(loginForm);
+            const result = await userHttpService.login(loginForm);
 
             expect(httpService.post).toHaveBeenCalledWith(
                 apiEndpoints.LOGIN,
@@ -115,7 +115,7 @@ describe("UserService", () => {
 
             mockPost.mockRejectedValue(mockError);
 
-            await expect(userService.login(loginForm)).rejects.toThrow("Unauthorized");
+            await expect(userHttpService.login(loginForm)).rejects.toThrow("Unauthorized");
         });
     });
 });

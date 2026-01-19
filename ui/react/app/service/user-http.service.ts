@@ -1,9 +1,9 @@
 import { queryClient } from "@/utils/query-client";
 import { httpService } from "@/service/http.service";
 import { apiEndpoints } from "@/api-endpoints";
-import type { ILoginForm } from "@/login/login.model";
+import type { ILoginForm } from "@/pages/login/login.model";
 
-class UserService {
+class UserHttpService {
     getDemoUsers() {
         return queryClient.fetchQuery({
             queryKey: ['demo-users'],
@@ -18,4 +18,4 @@ class UserService {
     }
 }
 
-export const userService = new UserService()
+export const userHttpService = new UserHttpService()
