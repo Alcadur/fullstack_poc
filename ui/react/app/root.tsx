@@ -2,6 +2,8 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, 
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Provider } from "react-redux";
+import { appStore } from "@/store/app-store";
 
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,7 +43,11 @@ export function HydrateFallback() {
 }
 
 export default function App() {
-    return <Outlet />;
+    return (
+        <Provider store={appStore}>
+            <Outlet />
+        </Provider>
+    );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
