@@ -1,9 +1,10 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, } from "react-router";
+import { isRouteErrorResponse, Links, Meta, Outlet, replace, Scripts, ScrollRestoration, } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Provider } from "react-redux";
 import { appStore } from "@/store/app-store";
+import { clientAuthMiddleware } from "@/routes/mddlewares/authMiddleware";
 
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,6 +42,8 @@ export function HydrateFallback() {
         Loading...
     </div>;
 }
+
+export const clientMiddleware: Route.ClientMiddlewareFunction[] = [clientAuthMiddleware]
 
 export default function App() {
     return (
