@@ -1,7 +1,7 @@
 import { Controller, type SubmitHandler, useForm, useWatch } from "react-hook-form";
 import type { ILoginForm } from "./login.model";
 import { Button, TextField } from "@mui/material";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { UsernameField } from "./components/username-field";
 
 import useDebounce from "@/hooks/use-debounce";
@@ -11,6 +11,7 @@ import { CustomSnackbar } from "@/components/custom-snackbar/custom-snackbar";
 import { useCustomSnackbarControl } from "@/components/custom-snackbar/use-custom-snackbar-control";
 import { useAppDispatch } from "@/store/store-hooks";
 import { setUser } from "@/store/user-slice";
+import { AppRoutes } from "@/routes/app-routes.model";
 
 export const DEMO_USERS_PASSWORD = "$trongPassword.123!";
 
@@ -21,6 +22,7 @@ export function Login() {
     const debounce = useDebounce();
     const demoUsersUsernames = demoUsers.map((user) => user.username);
     const storeDispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const form = useForm({
         defaultValues: {
@@ -46,6 +48,7 @@ export function Login() {
         try {
             const user: User = await userHttpService.login(data);
             storeDispatch(setUser(user));
+            navigate(AppRoutes.TASKS);
         } catch (e) {
             snackbarControl.error();
         }

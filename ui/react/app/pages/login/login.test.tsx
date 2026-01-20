@@ -1,15 +1,17 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DEMO_USERS_PASSWORD, Login } from "./login";
 import { userHttpService } from "@/service/user-http.service";
 import "@testing-library/jest-dom";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { useCustomSnackbarControl } from "@/components/custom-snackbar/use-custom-snackbar-control";
 import { renderWithStore } from "@/utils/render-with-store";
 import { userSelector } from "@/store/user-slice";
+import { AppRoutes } from "@/routes/app-routes.model";
 
 jest.mock("react-router", () => ({
     useLoaderData: jest.fn(),
+    useNavigate: jest.fn(),
 }));
 
 jest.mock("@/service/user-http.service", () => ({
@@ -39,6 +41,8 @@ describe("Login Component", () => {
         { uuid: "3", username: "admin@" },
     ];
 
+    let mockNavigate: jest.Mock;
+
     const fillForm = async (username: string, password: string, send: boolean = false) => {
         const userAction = userEvent.setup();
         const usernameField = screen.getByLabelText(/username/i);
@@ -65,6 +69,8 @@ describe("Login Component", () => {
             isOpen: false,
         };
         (useLoaderData as jest.Mock).mockReturnValue(mockDemoUsers);
+        mockNavigate = jest.fn();
+        (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
         (useCustomSnackbarControl as jest.Mock).mockReturnValue(mockSnackbarControl);
         mockLogin = userHttpService.login as jest.Mock;
     });
@@ -101,7 +107,7 @@ describe("Login Component", () => {
             });
         });
 
-        it("should save user in to store after logged-in", async () => {
+        it("should save user in to store and redirect to `tasks` after logged-in", async () => {
             mockLogin.mockResolvedValue({ uuid: "uuid123", username: "testuser" });
 
             const { store } = renderWithStore(<Login />);
@@ -110,6 +116,7 @@ describe("Login Component", () => {
 
             const savedUser = userSelector(store.getState());
             expect(savedUser).toEqual({ uuid: "uuid123", username: "testuser" });
+            expect(mockNavigate).toHaveBeenCalledWith(AppRoutes.TASKS);
         });
 
         it("should set loading state during login", async () => {
