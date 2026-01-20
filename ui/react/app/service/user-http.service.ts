@@ -14,7 +14,7 @@ class UserHttpService {
     login(form: ILoginForm) {
         return httpService.post(apiEndpoints.LOGIN, JSON.stringify(form), {
             headers: { 'Content-Type': 'application/json' }
-        })
+        }).then(response => response.json());
     }
 }
 

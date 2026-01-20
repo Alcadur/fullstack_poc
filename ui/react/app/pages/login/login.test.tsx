@@ -5,6 +5,8 @@ import { userHttpService } from "@/service/user-http.service";
 import "@testing-library/jest-dom";
 import { useLoaderData } from "react-router";
 import { useCustomSnackbarControl } from "@/components/custom-snackbar/use-custom-snackbar-control";
+import { renderWithStore } from "@/utils/render-with-store";
+import { userSelector } from "@/store/user-slice";
 
 jest.mock("react-router", () => ({
     useLoaderData: jest.fn(),
@@ -69,14 +71,14 @@ describe("Login Component", () => {
 
     describe("Rendering", () => {
         it("should render username field with demo users as options", () => {
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const usernameField = screen.getByTestId("username-field");
             expect(usernameField).toBeInTheDocument();
         });
 
         it("should mark password field as required", () => {
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const passwordField = screen.getByLabelText(/password/i);
             expect(passwordField).toBeRequired();
@@ -87,7 +89,7 @@ describe("Login Component", () => {
         it("should call userService.login with form data on submit", async () => {
             mockLogin.mockResolvedValue({ ok: true });
 
-            render(<Login />);
+            renderWithStore(<Login />);
 
             await fillForm("testuser", "testpassword", true);
 
@@ -99,6 +101,17 @@ describe("Login Component", () => {
             });
         });
 
+        it("should save user in to store after logged-in", async () => {
+            mockLogin.mockResolvedValue({ uuid: "uuid123", username: "testuser" });
+
+            const { store } = renderWithStore(<Login />);
+
+            await fillForm("testuser", "testpassword", true);
+
+            const savedUser = userSelector(store.getState());
+            expect(savedUser).toEqual({ uuid: "uuid123", username: "testuser" });
+        });
+
         it("should set loading state during login", async () => {
             let resolveLogin: any;
             mockLogin.mockReturnValue(
@@ -107,7 +120,7 @@ describe("Login Component", () => {
                 })
             );
 
-            render(<Login />);
+            renderWithStore(<Login />);
 
             await fillForm("testuser", "testpassword", true);
 
@@ -124,7 +137,7 @@ describe("Login Component", () => {
 
         it("should not submit form with empty fields", async () => {
             const user = userEvent.setup();
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const loginButton = screen.getByRole("button", { name: /login/i });
             await user.click(loginButton);
@@ -138,7 +151,7 @@ describe("Login Component", () => {
             mockSnackbarControl.isOpen = false;
             mockLogin.mockRejectedValue(new Error("Invalid credentials"));
 
-            render(<Login />);
+            renderWithStore(<Login />);
 
             await fillForm("wrong@example.com", "wrongpassword", true);
 
@@ -150,7 +163,7 @@ describe("Login Component", () => {
         it("should handle network errors during login", async () => {
             mockLogin.mockRejectedValue(new Error("Network error"));
 
-            render(<Login />);
+            renderWithStore(<Login />);
 
             await fillForm("testuser", "testpassword", true);
 
@@ -163,7 +176,7 @@ describe("Login Component", () => {
             const user = userEvent.setup();
             mockLogin.mockRejectedValue(new Error("Login failed"));
 
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const { loginButton } = await fillForm("testuser", "testpassword", true);
 
@@ -180,7 +193,7 @@ describe("Login Component", () => {
     describe("Demo User Auto-fill", () => {
         it("should auto-fill password when demo user is selected", async () => {
             const user = userEvent.setup();
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const usernameField = screen.getByLabelText(/username/i);
             await user.type(usernameField, "demo1");
@@ -193,7 +206,7 @@ describe("Login Component", () => {
 
         it("should not auto-fill password if password already exists", async () => {
             const user = userEvent.setup();
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const passwordField = screen.getByLabelText(/password/i);
             const usernameField = screen.getByLabelText(/username/i);
@@ -209,7 +222,7 @@ describe("Login Component", () => {
 
         it("should not auto-fill password for non-demo users", async () => {
             const user = userEvent.setup();
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const usernameField = screen.getByLabelText(/username/i);
             await user.type(usernameField, "notademouser@example.com");
@@ -224,7 +237,7 @@ describe("Login Component", () => {
     describe("Form Data Handling", () => {
         it("should update form state when username changes", async () => {
             const user = userEvent.setup();
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const usernameField = screen.getByLabelText(/username/i);
             await user.type(usernameField, "newuser@test.com");
@@ -234,7 +247,7 @@ describe("Login Component", () => {
 
         it("should update form state when password changes", async () => {
             const user = userEvent.setup();
-            render(<Login />);
+            renderWithStore(<Login />);
 
             const passwordField = screen.getByLabelText(/password/i);
             await user.type(passwordField, "newpassword123");
@@ -243,7 +256,7 @@ describe("Login Component", () => {
         });
 
         it("should load demo users from loader data", () => {
-            render(<Login />);
+            renderWithStore(<Login />);
 
             expect(useLoaderData).toHaveBeenCalled();
         });

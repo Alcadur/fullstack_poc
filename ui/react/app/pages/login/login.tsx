@@ -9,6 +9,8 @@ import { userHttpService } from "@/service/user-http.service";
 import { useState } from "react";
 import { CustomSnackbar } from "@/components/custom-snackbar/custom-snackbar";
 import { useCustomSnackbarControl } from "@/components/custom-snackbar/use-custom-snackbar-control";
+import { useAppDispatch } from "@/store/store-hooks";
+import { setUser } from "@/store/user-slice";
 
 export const DEMO_USERS_PASSWORD = "$trongPassword.123!";
 
@@ -18,6 +20,8 @@ export function Login() {
     const snackbarControl = useCustomSnackbarControl();
     const debounce = useDebounce();
     const demoUsersUsernames = demoUsers.map((user) => user.username);
+    const storeDispatch = useAppDispatch();
+
     const form = useForm({
         defaultValues: {
             username: "",
@@ -40,7 +44,8 @@ export function Login() {
     const handleLogin: SubmitHandler<ILoginForm> = async (data) => {
         setIsLoggingIn(true);
         try {
-            await userHttpService.login(data);
+            const user: User = await userHttpService.login(data);
+            storeDispatch(setUser(user));
         } catch (e) {
             snackbarControl.error();
         }
