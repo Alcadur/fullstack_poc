@@ -3,7 +3,7 @@ import { userHttpService } from "./user-http.service";
 import { httpService } from "./http.service";
 import { queryClient } from "@/utils/query-client";
 import { apiEndpoints } from "@/api-endpoints";
-import type { ILoginForm } from "@/login/login.model";
+import type { ILoginForm } from "@/pages/login/login.model";
 
 // Mock dependencies
 jest.mock("./http.service", () => ({
