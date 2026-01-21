@@ -32,9 +32,10 @@ class HttpService {
 
     private sendRequest(url: ApiEndpoints, method: string, body?: any, init?: RequestInit) {
         return fetch(`${BASE_URL}${url}`, {
+            credentials: 'include',
             ...init,
             method,
-            body
+            body,
         }).then((response) => {
             if (!response.ok) {
                 throw new HttpError(response.status, response.statusText);

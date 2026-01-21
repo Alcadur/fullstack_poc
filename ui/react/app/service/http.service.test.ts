@@ -24,7 +24,8 @@ describe("HttpService", () => {
                 `${BASE_URL}${mockEndpoint}`,
                 expect.objectContaining({
                     method: "GET",
-                    body: undefined
+                    body: undefined,
+                    credentials: 'include',
                 })
             );
             expect(result).toBe(mockResponse);
@@ -35,7 +36,8 @@ describe("HttpService", () => {
             (global.fetch as unknown as jest.Mock<typeof fetch>).mockResolvedValue(mockResponse as Response);
             const customInit: RequestInit = {
                 headers: { "Authorization": "Bearer token" },
-                cache: "no-cache"
+                cache: "no-cache",
+                credentials: 'omit',
             };
 
             await httpService.get(mockEndpoint, customInit);
@@ -46,7 +48,8 @@ describe("HttpService", () => {
                     method: "GET",
                     body: undefined,
                     headers: { "Authorization": "Bearer token" },
-                    cache: "no-cache"
+                    cache: "no-cache",
+                    credentials: 'omit',
                 })
             );
         });
