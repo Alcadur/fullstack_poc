@@ -16,6 +16,10 @@ class UserHttpService {
             headers: { 'Content-Type': 'application/json' }
         }).then(response => response.json());
     }
+
+    logout() {
+        return httpService.post(apiEndpoints.LOGOUT, null);
+    }
 }
 
 export const userHttpService = new UserHttpService()

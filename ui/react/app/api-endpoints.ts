@@ -1,6 +1,7 @@
 export const apiEndpoints = {
     DEMO_USERS: '/demo-users',
     LOGIN: '/login',
+    LOGOUT: '/logout',
     TODO_TASKS: "/tasks/user/:userUuid/todo",
 } as const
 
