@@ -31,7 +31,7 @@ public class Config {
                         .permitAll()
                         .anyRequest().authenticated()
                 );
-        http.cors(AbstractHttpConfigurer::disable);
+        http.cors(cors -> {});
 
         return http.build();
     }
@@ -43,7 +43,7 @@ public class Config {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOriginPatterns("*") // Add the client URL here
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
