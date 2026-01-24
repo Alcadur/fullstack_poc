@@ -13,24 +13,24 @@ export class HttpError extends Error {
 }
 
 class HttpService {
-    async get(url: ApiEndpoints, init?: RequestInit) {
-        return this.sendRequest(url, "GET", undefined, init);
+    async get<T>(url: ApiEndpoints, init?: RequestInit) {
+        return this.sendRequest<T>(url, "GET", undefined, init);
     }
 
-    async post(url: ApiEndpoints, body: any, init?: RequestInit) {
-        return this.sendRequest(url, "POST", body, init);
+    async post<T>(url: ApiEndpoints, body: any, init?: RequestInit) {
+        return this.sendRequest<T>(url, "POST", body, init);
     }
 
 
-    async put(url: ApiEndpoints, body: any, init?: RequestInit) {
-        return this.sendRequest(url, "PUT", body, init);
+    async put<T>(url: ApiEndpoints, body: any, init?: RequestInit) {
+        return this.sendRequest<T>(url, "PUT", body, init);
     }
 
-    async patch(url: ApiEndpoints, body: any, init?: RequestInit) {
-        return this.sendRequest(url, "PATCH", body, init);
+    async patch<T>(url: ApiEndpoints, body: any, init?: RequestInit) {
+        return this.sendRequest<T>(url, "PATCH", body, init);
     }
 
-    private sendRequest(url: ApiEndpoints, method: string, body?: any, init?: RequestInit) {
+    private sendRequest<T>(url: ApiEndpoints, method: string, body?: any, init?: RequestInit) {
         return fetch(`${BASE_URL}${url}`, {
             credentials: 'include',
             ...init,
@@ -42,7 +42,7 @@ class HttpService {
             }
 
             return response;
-        });
+        }) as Promise<Response & T>;
     }
 }
 
