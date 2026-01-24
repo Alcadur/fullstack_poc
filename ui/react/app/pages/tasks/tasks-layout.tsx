@@ -16,14 +16,14 @@ export default function TasksLayout() {
     };
 
     return (
-        <section className="mx-auto max-w-[75vw]">
+        <section className="mx-auto md:max-w-250 min-w-75">
             <header className="flex justify-center gap-3 p-3 shadow-[0_15px_10px_-15px_#111]">
                 <AvatarName username={user.username} />
                 <Button variant="contained" color="error" onClick={handleLogout} data-testid="logout-button">
                     Logout
                 </Button>
             </header>
-            <main>
+            <main className="flex flex-colr justify-center shrink-0">
                 <Outlet />
             </main>
         </section>
