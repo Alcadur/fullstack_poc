@@ -1,12 +1,14 @@
 package hamster.dev.fullstack_poc.controller;
 
 import hamster.dev.fullstack_poc.dto.TaskDTO;
+import hamster.dev.fullstack_poc.entity.User;
 import hamster.dev.fullstack_poc.service.TaskService;
 import hamster.dev.fullstack_poc.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,6 +29,7 @@ public class TaskController {
                 .orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 
+    @Deprecated
     @GetMapping("/user/{userUuid}/todo")
     public ResponseEntity<TaskDTO[]> getUserTodoTasks(@PathVariable("userUuid") UUID userId) {
         return userService.findByUuid(userId)
@@ -34,6 +37,19 @@ public class TaskController {
                 .orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 
+    @GetMapping("/todo")
+    public ResponseEntity<TaskDTO[]> getUserTodoTasks(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(taskService.getTodoTasksByAuthor(user));
+    }
+
+    @GetMapping("/completed")
+    public ResponseEntity<TaskDTO[]> getUserCompletedTasks(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(taskService.getCompletedTasksByAuthor(user));
+    }
+
+    @Deprecated
     @GetMapping("/user/{userUuid}/completed")
     public ResponseEntity<TaskDTO[]> getUserCompletedTasks(@PathVariable("userUuid") UUID userId) {
         return userService.findByUuid(userId)

@@ -42,10 +42,9 @@ public class UserService {
                 .toArray(UserDTO[]::new);
     }
 
-    public Optional<UserDTO> login(String username, String password) {
+    public Optional<User> login(String username, String password) {
         return userRepository.findByUsername(username)
-                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .map(mapper::toDto);
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()));
     }
 
     public Optional<User> findByUuid(UUID uuid) {

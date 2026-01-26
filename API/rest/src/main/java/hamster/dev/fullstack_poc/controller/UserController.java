@@ -2,6 +2,7 @@ package hamster.dev.fullstack_poc.controller;
 
 import hamster.dev.fullstack_poc.dto.LoginDTO;
 import hamster.dev.fullstack_poc.dto.UserDTO;
+import hamster.dev.fullstack_poc.mapper.UserDtoMapper;
 import hamster.dev.fullstack_poc.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserDtoMapper mapper;
 
     @GetMapping("/demo-users")
     UserDTO[] demoUsers () {
@@ -39,7 +41,7 @@ public class UserController {
                     session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                             SecurityContextHolder.getContext());
 
-                    return ResponseEntity.ok(user);
+                    return ResponseEntity.ok(mapper.toDto(user));
                 })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
