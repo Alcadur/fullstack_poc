@@ -29,8 +29,6 @@ describe("TaskHttpService", () => {
     });
 
     describe("getToDoTasksByUserUid", () => {
-        const testUuid = "test-user-uuid-123";
-
         it("should fetch TODO tasks using queryClient with correct parameters", async () => {
             const mockTasks = [
                 { id: "1", title: "Task 1", completed: false },
@@ -40,35 +38,21 @@ describe("TaskHttpService", () => {
 
             mockGet.mockResolvedValue(mockResponse as Response);
 
-            const result = await taskHttpService.getToDoTasksByUserUid(testUuid);
+            const result = await taskHttpService.getToDoTasks();
 
             expect(queryClient.fetchQuery).toHaveBeenCalledWith({
-                queryKey: ["todo-tasks-by-user", testUuid],
+                queryKey: ["todo-tasks"],
                 queryFn: expect.any(Function),
             });
             expect(result).toEqual(mockTasks);
-            expect(mockGet).toHaveBeenCalledWith(`/tasks/user/${testUuid}/todo`);
-        });
-
-        it("should use correct query key with user UUID", async () => {
-            const anotherUuid = "another-user-uuid-456";
-            const mockResponse = { ok: true };
-            mockGet.mockResolvedValue(mockResponse as Response);
-            mockFetchQuery.mockResolvedValue([]);
-
-            await taskHttpService.getToDoTasksByUserUid(anotherUuid);
-
-            expect(queryClient.fetchQuery).toHaveBeenCalledWith({
-                queryKey: ["todo-tasks-by-user", anotherUuid],
-                queryFn: expect.any(Function),
-            });
+            expect(mockGet).toHaveBeenCalledWith(`/tasks/todo`);
         });
 
         it("should handle error when fetching tasks fails", async () => {
             const mockError = new Error("Failed to fetch tasks");
             mockFetchQuery.mockRejectedValue(mockError);
 
-            await expect(taskHttpService.getToDoTasksByUserUid(testUuid)).rejects.toThrow(
+            await expect(taskHttpService.getToDoTasks()).rejects.toThrow(
                 "Failed to fetch tasks"
             );
         });
@@ -81,7 +65,7 @@ describe("TaskHttpService", () => {
                 return (queryFn as () => Promise<any>)();
             });
 
-            await expect(taskHttpService.getToDoTasksByUserUid(testUuid)).rejects.toThrow("Network error");
+            await expect(taskHttpService.getToDoTasks()).rejects.toThrow("Network error");
         });
     });
 });

@@ -4,10 +4,10 @@ import { apiEndpoints, buildApiUrl } from "@/api-endpoints";
 import type { Task } from "@/model/task.model";
 
 class TaskHttpService {
-    getToDoTasksByUserUid(uuid: string) {
+    getToDoTasks() {
         return queryClient.fetchQuery({
-            queryKey: ['todo-tasks-by-user', uuid],
-            queryFn: () => httpService.get(buildApiUrl(apiEndpoints.TODO_TASKS, { userUuid: uuid })),
+            queryKey: ['todo-tasks'],
+            queryFn: () => httpService.get(apiEndpoints.TODO_TASKS),
         })
     }
 
