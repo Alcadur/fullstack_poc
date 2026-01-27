@@ -7,7 +7,7 @@ import useDebounce from "@/hooks/use-debounce";
 type TaskRowProps = {
     task: Task,
 }
-// TODO: tests for TaskRow
+
 export function TaskRow({ task }: TaskRowProps) {
     const [isOpened, setIsOpened] = useState<boolean>(false);
     const [localTask, setLocalTask] = useState<Task>(structuredClone(task));
