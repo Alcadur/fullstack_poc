@@ -1,4 +1,4 @@
-type User = {
+export type User = {
     uuid: string;
     username: string;
 }

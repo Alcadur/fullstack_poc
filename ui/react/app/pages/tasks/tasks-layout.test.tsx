@@ -5,6 +5,7 @@ import { renderWithStore } from "@/utils/render-with-store";
 import TasksLayout from "@/pages/tasks/tasks-layout";
 import { AppRoutes } from "@/routes/app-routes.model";
 import userEvent from "@testing-library/user-event";
+import type { User } from "@/model/user.model";
 
 jest.mock("@/service/user-http.service", () => ({
     userHttpService: {

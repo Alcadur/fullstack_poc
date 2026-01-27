@@ -4,8 +4,8 @@ import { httpService } from "./http.service";
 import { queryClient } from "@/utils/query-client";
 import { apiEndpoints } from "@/api-endpoints";
 import type { ILoginForm } from "@/pages/login/login.model";
+import type { User } from "@/model/user.model";
 
-// Mock dependencies
 jest.mock("./http.service", () => ({
     httpService: {
         get: jest.fn(),
@@ -91,9 +91,10 @@ describe("UserService", () => {
         })
 
         it("should make POST request with correct form data", async () => {
+            const mockUserData = { uuid: "uuid-123" }
             const mockResponse = {
                 ok: true,
-                json: () => Promise.resolve({ token: "session-token-123" })
+                json: () => Promise.resolve(mockUserData)
             };
 
             mockPost.mockResolvedValue(mockResponse as Response);
@@ -107,7 +108,7 @@ describe("UserService", () => {
                     headers: { "Content-Type": "application/json" },
                 }
             );
-            expect(result).toBe(mockResponse);
+            expect(result).toBe(mockUserData);
         });
 
         it("should handle login failure", async () => {

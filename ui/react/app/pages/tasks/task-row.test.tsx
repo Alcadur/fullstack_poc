@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { TaskRow } from "./task-row";
 import { taskHttpService } from "@/service/task-http.service";
 import type { Task } from "@/model/task.model";
-import { mockDebounce } from "@/utils/tests-utils";
 
 if (typeof structuredClone === "undefined") {
     global.structuredClone = (obj: any) => JSON.parse(JSON.stringify(obj));
@@ -17,7 +16,12 @@ jest.mock("@/service/task-http.service", () => ({
 
 const mockUpdateTask = taskHttpService.updateTask as jest.MockedFunction<typeof taskHttpService.updateTask>;
 
-mockDebounce("@/hooks/use-debounce");
+jest.mock("@/hooks/use-debounce", () => ({
+    __esModule: true,
+    default: () => (callback: () => void, _delay: number) => {
+        callback();
+    },
+}));
 
 const mockTask: Task = Object.freeze({
     uuid: "1-2-3",

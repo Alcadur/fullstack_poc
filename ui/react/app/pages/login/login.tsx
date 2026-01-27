@@ -12,6 +12,7 @@ import { useCustomSnackbarControl } from "@/components/custom-snackbar/use-custo
 import { useAppDispatch } from "@/store/store-hooks";
 import { setUser } from "@/store/user-slice";
 import { AppRoutes } from "@/routes/app-routes.model";
+import type { User } from "@/model/user.model";
 
 export const DEMO_USERS_PASSWORD = "$trongPassword.123!";
 
