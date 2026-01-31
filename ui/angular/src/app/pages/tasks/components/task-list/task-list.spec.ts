@@ -1,10 +1,10 @@
 import { ComponentFixture, DeferBlockBehavior, DeferBlockState, TestBed } from '@angular/core/testing';
 import { TaskList } from './task-list';
 import { Task } from '@/models/task.model';
-import { TaskListRow } from '@/pages/tasks/components/task-list/components/task-list-row/task-list-row';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { IntersectionObserverMock } from '@/utils/test-helpers';
+import { TaskListRow } from '@/pages/tasks/components/task-list/task-list-row/task-list-row';
 
 @Component({
   selector: 'task-list-row',

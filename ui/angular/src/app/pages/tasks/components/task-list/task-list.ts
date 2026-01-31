@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { Task } from '@/models/task.model';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { TaskListRow } from '@/pages/tasks/components/task-list/components/task-list-row/task-list-row';
+import { TaskListRow } from '@/pages/tasks/components/task-list/task-list-row/task-list-row';
 
 @Component({
   standalone: true,
