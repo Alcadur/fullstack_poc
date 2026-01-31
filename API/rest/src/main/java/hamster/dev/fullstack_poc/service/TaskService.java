@@ -51,6 +51,18 @@ public class TaskService {
                 .toArray(TaskDTO[]::new);
     }
 
+    public Optional<TaskDTO> updateTask(TaskDTO taskDTO) {
+        return taskRepository.findByUuid(taskDTO.uuid)
+                .map(task -> {
+                    Task tmpTask = mapper.toEntity(taskDTO);
+                    task.setTitle(tmpTask.getTitle());
+                    task.setDescription(tmpTask.getDescription());
+                    task.setCompleted(tmpTask.isCompleted());
+
+                    return mapper.toDto(taskRepository.save(task));
+                });
+    }
+
     public Optional<TaskDTO> updateTaskStatus(UUID taskUuid, UUID userUuid, boolean completed) {
         return taskRepository.findByUuidAndAuthorUuid(taskUuid, userUuid)
                 .map(task -> {

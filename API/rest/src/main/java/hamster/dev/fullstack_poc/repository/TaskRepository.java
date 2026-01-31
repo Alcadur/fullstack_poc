@@ -12,4 +12,5 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     Collection<Task> findAllByAuthorOrderByCompleted(User author);
     Collection<Task> findAllByAuthorAndCompleted(User author, boolean completed);
     Optional<Task> findByUuidAndAuthorUuid(UUID taskUuid, UUID authorUuid);
+    Optional<Task> findByUuid(UUID taskUuid);
 }

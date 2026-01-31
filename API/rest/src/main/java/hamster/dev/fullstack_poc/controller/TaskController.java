@@ -67,4 +67,21 @@ public class TaskController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PatchMapping("")
+    public ResponseEntity<TaskDTO> updateTaskStatus(
+            @RequestBody TaskDTO taskDTO,
+            Authentication authentication
+    ) {
+        User user = (User) authentication.getPrincipal();
+
+        assert user != null;
+        if (!user.getUuid().equals(taskDTO.authorUuid)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        return taskService.updateTask(taskDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
