@@ -57,28 +57,16 @@ export const TaskStore = signalStore(
             )),
           )
         ),
-        toggleTaskCompleted: rxMethod<[string, boolean]>(
+        updateTask: rxMethod<Task>(
           pipe(
-            tap(([taskUuid, completed]) => {
-              let tasks: Task[] = store.entities();
-
-              const task = tasks.find(task => task.uuid === taskUuid);
-
-              if (!task) {
-                throw new Error(`Task with UUID ${taskUuid} not found`);
-              }
-
-              patchState(store, updateEntity({
-                  id: taskUuid,
-                  changes: () => ({ completed }),
-                }, { selectId })
-              );
-            }),
             debounceTime(1000),
-            switchMap(([taskUuid, completed]) =>
-              httpService.toggleTaskCompleted(taskUuid, completed).pipe(
+            switchMap((task) =>
+              httpService.updateTask(task).pipe(
                 tapResponse({
-                  next: () => patchState(store, { areToDoTasksLoading: false }),
+                  next: () => {
+                    patchState(store, { areToDoTasksLoading: false });
+                    patchState(store, updateEntity({ id: task.uuid, changes: () => task }, { selectId }));
+                  },
                   error: () => patchState(store, { areToDoTasksLoading: false })
                 })
               )

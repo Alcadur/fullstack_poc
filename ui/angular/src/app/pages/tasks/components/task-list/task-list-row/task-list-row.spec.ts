@@ -13,7 +13,7 @@ describe('TaskListRow', () => {
 
   beforeEach(async () => {
     mockTaskStore = {
-      toggleTaskCompleted: vi.fn()
+      updateTask: vi.fn()
     };
 
     mockTask = {
@@ -46,79 +46,54 @@ describe('TaskListRow', () => {
       const mockEvent = {
         stopPropagation: vi.fn()
       } as unknown as MouseEvent;
+      fixture.detectChanges()
 
       component.toggleCompleted(mockEvent);
 
       expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(1);
     });
 
-    it('should call taskStore.toggleTaskCompleted with correct parameters when task is not completed', () => {
+    it('should call taskStore.updateTask with correct parameters when task is not completed', () => {
       mockTask = { ...mockTask, completed: false };
+      fixture.detectChanges()
 
       component.toggleCompleted(mockEvent);
 
-      expect(mockTaskStore.toggleTaskCompleted).toHaveBeenCalledWith([
-        'test-uuid-123',
-        true
-      ]);
+      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({...mockTask, completed: true});
     });
 
-    it('should call taskStore.toggleTaskCompleted with correct parameters when task is completed', () => {
+    it('should call taskStore.updateTask with correct parameters when task is completed', () => {
       mockTask = { ...mockTask, completed: true };
+      fixture.detectChanges()
 
       component.toggleCompleted(mockEvent);
 
-      expect(mockTaskStore.toggleTaskCompleted).toHaveBeenCalledWith([
-        'test-uuid-123',
-        false
-      ]);
+      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({ ...mockTask, completed: false });
     });
 
     it('should toggle completed state correctly', () => {
       const task1 = { ...mockTask, completed: false };
       component.task = vi.fn(() => task1) as any;
+      fixture.detectChanges()
       component.toggleCompleted(mockEvent);
 
-      expect(mockTaskStore.toggleTaskCompleted).toHaveBeenCalledWith([
-        'test-uuid-123',
-        true
-      ]);
+      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({...task1, completed: true});
 
+      mockTaskStore.updateTask.mockClear();
 
-      mockTaskStore.toggleTaskCompleted.mockClear();
-
-      const task2 = { ...mockTask, completed: true };
+      const task2 = { ...mockTask,  uuid: 'new-uuid-321', completed: true };
       component.task = vi.fn(() => task2) as any;
+      component.ngOnInit();
       component.toggleCompleted(mockEvent);
 
-      expect(mockTaskStore.toggleTaskCompleted).toHaveBeenCalledWith([
-        'test-uuid-123',
-        false
-      ]);
-    });
-
-    it('should work with different task UUIDs', () => {
-      const differentTask = {
-        uuid: 'different-uuid-456',
-        title: 'Different Task',
-        description: 'Different Description',
-        completed: false
-      };
-
-      component.task = vi.fn(() => differentTask) as any;
-      component.toggleCompleted(mockEvent);
-
-      expect(mockTaskStore.toggleTaskCompleted).toHaveBeenCalledWith([
-        'different-uuid-456',
-        true
-      ]);
+      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({...task2, completed: false});
     });
   });
 
   describe('taskStore', () => {
-    it('should have toggleTaskCompleted method on taskStore', () => {
-      expect(component.taskStore.toggleTaskCompleted).toBeDefined();
-      expect(typeof component.taskStore.toggleTaskCompleted).toBe('function');
+    it('should have updateTask method on taskStore', () => {
+      expect(component.taskStore.updateTask).toBeDefined();
+      expect(typeof component.taskStore.updateTask).toBe('function');
     });
   });
 });

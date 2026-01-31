@@ -22,5 +22,6 @@ export class TaskListRow {
     event.stopPropagation();
     const task = this.task();
     this.taskStore.toggleTaskCompleted([task.uuid, !task.completed]);
+    this.taskStore.updateTask(localTask);
   }
 }

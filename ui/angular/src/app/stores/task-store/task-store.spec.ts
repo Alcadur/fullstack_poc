@@ -22,7 +22,7 @@ describe('TaskStore', () => {
   beforeEach(() => {
     mockHttpService = {
       getTasksByCompleted: vi.fn(),
-      toggleTaskCompleted: vi.fn(),
+      updateTask: vi.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -145,7 +145,7 @@ describe('TaskStore', () => {
       });
     });
 
-    describe('toggleTaskCompleted', () => {
+    describe('updateTask', () => {
       beforeAll(() => {
         vi.useFakeTimers();
       });
@@ -159,72 +159,54 @@ describe('TaskStore', () => {
         store.loadToDoTasks();
       });
 
-      it('should update task completed status immediately', () => {
-        mockHttpService.toggleTaskCompleted.mockReturnValue(
-          of({ ...mockToDoTasks[0], completed: true })
-        );
-
-        store.toggleTaskCompleted(['1', true]);
-
-        const task = store.entityMap()['1'];
-        expect(task.completed).toBe(true);
-      });
-
       it('should set areToDoTasksLoading to false on HTTP error', () => {
-        mockHttpService.toggleTaskCompleted.mockReturnValue(
+        mockHttpService.updateTask.mockReturnValue(
           throwError(() => new Error('Network error'))
         );
 
-        store.toggleTaskCompleted(['1', true]);
+        store.updateTask({...mockToDoTasks[1], completed: true});
         vi.advanceTimersByTime(1000);
 
         expect(store.areToDoTasksLoading()).toBe(false);
       });
 
-      it('should throw error when task is not found', () => {
-        expect(() => {
-          store.toggleTaskCompleted(['non-existent-uuid', true]);
-          vi.advanceTimersByTime(1000);
-        }).toThrowError('Task with UUID non-existent-uuid not found');
-      });
-
       it('should update multiple tasks independently', () => {
-        mockHttpService.toggleTaskCompleted.mockReturnValue(
+        mockHttpService.updateTask.mockReturnValue(
           of({ ...mockToDoTasks[0], completed: true })
         );
 
-        store.toggleTaskCompleted(['1', true]);
+        store.updateTask({...mockToDoTasks[0], completed: true});
         vi.advanceTimersByTime(1000);
 
-        mockHttpService.toggleTaskCompleted.mockReturnValue(
+        mockHttpService.updateTask.mockReturnValue(
           of({ ...mockToDoTasks[1], completed: true })
         );
 
-        store.toggleTaskCompleted(['2', true]);
+        store.updateTask({...mockToDoTasks[1], completed: true});
         vi.advanceTimersByTime(1000);
 
         expect(store.entityMap()['1'].completed).toBe(true);
         expect(store.entityMap()['2'].completed).toBe(true);
-        expect(mockHttpService.toggleTaskCompleted).toHaveBeenCalledTimes(2);
+        expect(mockHttpService.updateTask).toHaveBeenCalledTimes(2);
       });
 
       it('should toggle task from completed to uncompleted', () => {
-        mockHttpService.toggleTaskCompleted.mockReturnValue(
+        mockHttpService.updateTask.mockReturnValue(
           of({ ...mockToDoTasks[0], completed: true })
         );
 
-        store.toggleTaskCompleted(['1', true]);
+        store.updateTask({...mockToDoTasks[0], completed: true});
         vi.advanceTimersByTime(1000);
 
-        mockHttpService.toggleTaskCompleted.mockReturnValue(
+        mockHttpService.updateTask.mockReturnValue(
           of({ ...mockToDoTasks[0], completed: false })
         );
 
-        store.toggleTaskCompleted(['1', false]);
+        store.updateTask({...mockToDoTasks[0], completed: false});
         vi.advanceTimersByTime(1000);
 
         expect(store.entityMap()['1'].completed).toBe(false);
-        expect(mockHttpService.toggleTaskCompleted).toHaveBeenCalledWith('1', false);
+        expect(mockHttpService.updateTask).toHaveBeenCalledWith({...mockToDoTasks[0], completed: false});
       });
     });
 
@@ -253,11 +235,11 @@ describe('TaskStore', () => {
         mockHttpService.getTasksByCompleted.mockReturnValue(of(mockToDoTasks));
         store.loadToDoTasks();
 
-        mockHttpService.toggleTaskCompleted.mockReturnValue(
+        mockHttpService.updateTask.mockReturnValue(
           of({ ...mockToDoTasks[0], completed: true })
         );
 
-        store.toggleTaskCompleted(['1', true]);
+        store.updateTask({...mockToDoTasks[0], completed: true});
         vi.advanceTimersByTime(1000);
 
         expect(store.entities().length).toBe(2);

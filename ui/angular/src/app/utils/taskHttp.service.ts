@@ -18,10 +18,10 @@ export class TaskHttpService {
   }
 
   getTasksByCompleted(completed: boolean): Observable<Task[]> {
-    return this.httpClient.get<Task[]>(`${BASE_URL}/${completed ? 'completed' : 'todo'}`)
+    return this.httpClient.get<Task[]>(`${BASE_URL}/${completed ? 'completed' : 'todo'}`);
   }
 
-  toggleTaskCompleted(taskUuid: string, completed: boolean): Observable<Task> {
-    return this.httpClient.patch<Task>(`${BASE_URL}/user/${this.userUuid}/${taskUuid}` , completed)
+  updateTask(task: Task): Observable<Task> {
+    return this.httpClient.patch<Task>(BASE_URL, task);
   }
 }
