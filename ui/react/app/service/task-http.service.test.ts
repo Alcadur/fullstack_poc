@@ -23,7 +23,7 @@ describe("TaskHttpService", () => {
         jest.clearAllMocks();
         mockFetchQuery = queryClient.fetchQuery as jest.Mock<typeof queryClient.fetchQuery>;
         mockFetchQuery.mockImplementation(async ({ queryFn }) =>
-            (await (queryFn as Function)()).json()
+            await (queryFn as Function)()
         );
         mockGet = httpService.get as jest.Mock<typeof httpService.get>;
     });

@@ -3,7 +3,7 @@ export const apiEndpoints = {
     LOGIN: '/login',
     LOGOUT: '/logout',
     TODO_TASKS: "/tasks/todo",
-    TASK: "/tasks/user/:userUuid/:taskUuid"
+    TASK: "/tasks"
 } as const
 
 export function buildApiUrl(endpoint: ApiEndpoints, params: Record<string, string>) {
