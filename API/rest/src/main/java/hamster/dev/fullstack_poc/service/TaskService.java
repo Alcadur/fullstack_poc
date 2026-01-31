@@ -17,17 +17,22 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskDtoMapper mapper;
 
-    public void createTask(User author, String title, String description) {
-        createTask(author, title, description, false);
+    public TaskDTO createTask(User author, TaskDTO taskDTO) {
+        Task task = mapper.toEntity(taskDTO);
+        return mapper.toDto(createTask(author, task.getTitle(), task.getDescription(), task.isCompleted()));
     }
 
-    public void createTask(User author, String title, String description, boolean completed) {
+    public Task createTask(User author, String title, String description) {
+        return createTask(author, title, description, false);
+    }
+
+    public Task createTask(User author, String title, String description, boolean completed) {
         Task task = new Task();
         task.setTitle(title);
         task.setDescription(description);
         task.setAuthor(author);
         task.setCompleted(completed);
-        taskRepository.save(task);
+        return taskRepository.save(task);
     }
 
     public TaskDTO[] getTodoTasksByAuthor(User user) {

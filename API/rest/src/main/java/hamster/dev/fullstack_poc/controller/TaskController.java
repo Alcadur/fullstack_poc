@@ -22,6 +22,19 @@ public class TaskController {
     private final TaskService taskService;
     private final UserService userService;
 
+    @PostMapping("")
+    public ResponseEntity<TaskDTO> addTask(
+            @RequestBody TaskDTO taskDTO,
+            Authentication authentication
+    ) {
+        User user = (User) authentication.getPrincipal();
+
+        assert user != null;
+
+        return ResponseEntity.ok(taskService.createTask(user, taskDTO));
+    }
+
+    @Deprecated
     @GetMapping("/user/{userUuid}")
     public ResponseEntity<TaskDTO[]> getUserTasks(@PathVariable("userUuid") UUID userId) {
         return userService.findByUuid(userId)
