@@ -12,8 +12,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
   selector: 'task-list-row',
   imports: [
     MatExpansionModule,
-    MatButtonToggleModule
-    MatButtonToggleModule,
     MatButton,
   ],
   templateUrl: './task-list-row.html',

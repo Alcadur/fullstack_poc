@@ -6,20 +6,13 @@
   <mat-expansion-panel-header>
     <mat-panel-title> {{ task.title }}</mat-panel-title>
     <mat-panel-description>
-      <mat-button-toggle-group
-        name="completed"
-        aria-label="Favorite Color"
-        [hideSingleSelectionIndicator]="true"
-        [value]="task.completed"
+      <button
+        matButton
+        (click)="toggleCompleted($event)"
+        [style]="isTaskUpdated ? '' : 'opacity: 0.5;'"
       >
-        <button
-          matButton
-          (click)="toggleCompleted($event)"
-          [style]="isTaskUpdated ? '' : 'opacity: 0.5;'"
-        >
-          {{ localTask.completed ? "✅" : "❌" }}
-        </button>
-      </mat-button-toggle-group>
+        {{ localTask.completed ? "✅" : "❌" }}
+      </button>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <p>{{ task.description }}</p>
