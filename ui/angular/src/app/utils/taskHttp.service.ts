@@ -17,8 +17,8 @@ export class TaskHttpService {
     return this.userStore.user()!.uuid;
   }
 
-  getLoggedInUserTasksByCompleted(completed: boolean): Observable<Task[]> {
-    return this.httpClient.get<Task[]>(`${BASE_URL}/user/${this.userUuid}/${completed ? 'completed' : 'todo'}`)
+  getTasksByCompleted(completed: boolean): Observable<Task[]> {
+    return this.httpClient.get<Task[]>(`${BASE_URL}/${completed ? 'completed' : 'todo'}`)
   }
 
   toggleTaskCompleted(taskUuid: string, completed: boolean): Observable<Task> {

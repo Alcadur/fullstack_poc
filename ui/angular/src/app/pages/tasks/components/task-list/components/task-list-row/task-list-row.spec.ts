@@ -20,7 +20,9 @@ describe('TaskListRow', () => {
       uuid: 'test-uuid-123',
       title: 'Test Task',
       description: 'Test Description',
-      completed: false
+      completed: false,
+      authorUuid: 'user1',
+      steps: [],
     };
 
     mockEvent = {

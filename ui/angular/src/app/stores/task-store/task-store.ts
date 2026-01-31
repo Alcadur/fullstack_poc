@@ -36,7 +36,7 @@ export const TaskStore = signalStore(
         loadToDoTasks: rxMethod<void>(
           pipe(
             pipe(tap(() => patchState(store, { areToDoTasksLoading: true }))),
-            switchMap(() => httpService.getLoggedInUserTasksByCompleted(false).pipe(
+            switchMap(() => httpService.getTasksByCompleted(false).pipe(
               tapResponse({
                 next: tasks => patchState(store, setAllEntities(tasks, { selectId })),
                 error: () => patchState(store, removeAllEntities()),
@@ -48,7 +48,7 @@ export const TaskStore = signalStore(
         loadCompetedTasks: rxMethod<void>(
           pipe(
             pipe(tap(() => patchState(store, { areCompletedTasksLoading: true }))),
-            switchMap(() => httpService.getLoggedInUserTasksByCompleted(true).pipe(
+            switchMap(() => httpService.getTasksByCompleted(true).pipe(
               tapResponse({
                 next: tasks => patchState(store, addEntities(tasks, { selectId })),
                 error: () => null,

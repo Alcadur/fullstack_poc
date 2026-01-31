@@ -22,19 +22,25 @@ describe('TaskList', () => {
       uuid: '1',
       title: 'Test Task 1',
       description: 'Description 1',
-      completed: false
+      completed: false,
+      authorUuid: 'user1',
+      steps: []
     },
     {
       uuid: '2',
       title: 'Test Task 2',
       description: 'Description 2',
-      completed: true
+      completed: true,
+      authorUuid: 'user1',
+      steps: []
     },
     {
       uuid: '3',
       title: 'Test Task 3',
       description: 'Description 3',
-      completed: false
+      completed: false,
+      authorUuid: 'user1',
+      steps: []
     }
   ];
 

@@ -1,6 +1,13 @@
-export type Task = {
-  readonly uuid: string;
+export type Step = {
   title: string;
-  description: string;
   completed: boolean;
+}
+
+export type Task = {
+  readonly uuid: string
+  readonly authorUuid: string,
+  completed: boolean,
+  description: string
+  steps: Step[],
+  title: string,
 }
