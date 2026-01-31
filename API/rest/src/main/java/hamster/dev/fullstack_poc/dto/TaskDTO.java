@@ -8,4 +8,10 @@ public class TaskDTO {
     public String title;
     public String description;
     public boolean completed;
+    public StepDTO[] steps;
+
+    public static class StepDTO {
+        public String title;
+        public boolean completed;
+    }
 }
