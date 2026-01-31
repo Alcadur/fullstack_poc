@@ -1,7 +1,10 @@
 @let task = this.task();
+@let localTask = this.localTask || task;
+@let isTaskUpdated = task.completed === localTask.completed;
+
 <mat-expansion-panel>
   <mat-expansion-panel-header>
-    <mat-panel-title> {{ task.title }} </mat-panel-title>
+    <mat-panel-title> {{ task.title }}</mat-panel-title>
     <mat-panel-description>
       <mat-button-toggle-group
         name="completed"
@@ -9,11 +12,13 @@
         [hideSingleSelectionIndicator]="true"
         [value]="task.completed"
       >
-        @if (task.completed) {
-          <mat-button-toggle [value]="true" (click)="toggleCompleted($event)">✅</mat-button-toggle>
-        } @else {
-          <mat-button-toggle [value]="false" (click)="toggleCompleted($event)">❌</mat-button-toggle>
-        }
+        <button
+          matButton
+          (click)="toggleCompleted($event)"
+          [style]="isTaskUpdated ? '' : 'opacity: 0.5;'"
+        >
+          {{ localTask.completed ? "✅" : "❌" }}
+        </button>
       </mat-button-toggle-group>
     </mat-panel-description>
   </mat-expansion-panel-header>
