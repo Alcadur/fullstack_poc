@@ -23,18 +23,18 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         userService.createUser("Admin", "$trongPassword.123!");
         User Bella = userService.createDemoUser("Belle", "$trongPassword.123!");
-        taskService.createTask(Bella, "Grocery shopping", "-bread, -tomato, -cucumber, -milk");
-        taskService.createTask(Bella, "Tidying up the garden", "- sweep the leaves, - replant the flowers, - wash the greenhouse");
+        taskService.createTask(Bella, "Grocery shopping", "[API:STEPS]-[x]bread, -[]tomato, -[]cucumber, -[]milk");
+        taskService.createTask(Bella, "Tidying up the garden", "[API:STEPS]-[] sweep the leaves, -[x] replant the flowers, -[] wash the greenhouse");
 
         User Alice = userService.createDemoUser("Alicia", "$trongPassword.123!");
-        taskService.createTask(Alice, "Cleaning the bathroom", "-scrub the sink, -wipe the mirrors, -mop the floor", true);
-        taskService.createTask(Alice, "Organizing the closet", "-sort the clothes, -fold the towels, -put away the shoes");
-        taskService.createTask(Alice, "Clean the kitchen", "-wipe the counters, -wash the dishes, -vacuum the floor");
+        taskService.createTask(Alice, "Cleaning the bathroom", "[API:STEPS]-[x]scrub the sink, -[x]wipe the mirrors, -[]mop the floor", true);
+        taskService.createTask(Alice, "Organizing the closet", "[API:STEPS]-[]sort the clothes, -[]fold the towels, -[x]put away the shoes");
+        taskService.createTask(Alice, "Clean the kitchen", "[API:STEPS]-[x]wipe the counters, -[]wash the dishes, -[]vacuum the floor");
 
         User Tyrell = userService.createDemoUser("Tyrell", "$trongPassword.123!");
-        taskService.createTask(Tyrell, "Car repair", "-order parts, -change the oil, -check the tires");
+        taskService.createTask(Tyrell, "Car repair", "[API:STEPS]-[x]order parts, -[]change the oil, -[]check the tires");
         taskService.createTask(Tyrell, "Party", "Remember to buy a gift for Alice's birthday party");
-        taskService.createTask(Tyrell, "Home renovation", "-paint the walls, -replace the flooring, -install new cabinets");
+        taskService.createTask(Tyrell, "Home renovation", "[API:STEPS]-[]paint the walls, -[]replace the flooring, -[]install new cabinets");
 
         messageService.sendMessage(Bella, "Hello Alice, how are you doing today?");
         messageService.sendMessage(Alice, "I'm doing well, thanks for asking!");
