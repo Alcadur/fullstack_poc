@@ -1,8 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { userSlice } from "@/store/user-slice";
+import { tasksSlice } from "@/store/tasks-slice";
 
 const rootReducer = combineReducers({
-    userData: userSlice.reducer
+    userData: userSlice.reducer,
+    tasksData: tasksSlice.reducer
 })
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
