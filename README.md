@@ -27,10 +27,24 @@ Please take note that this is Proof of Concept, and I am aware of the luck of se
 - [x] Login page
 - [ ] Register page
 - [ ] Tasks list
+  - [x] Show list
+  - [x] Edit task status
+  - [ ] Display task steps
+  - [ ] Edit task step status
+  - [ ] Edit task step title
+  - [ ] Edit task description
+  - [ ] Add a new task
 - [ ] Global chat 
 
 #### React:
-- [ ] Login page
+- [x] Login page
 - [ ] Register page
 - [ ] Tasks list
+  - [x] Show list
+  - [x] Edit task status
+  - [x] Display task steps
+  - [x] Edit task step status
+  - [ ] Edit task step title
+  - [ ] Edit task description
+  - [x] Add a new task
 - [ ] Global chat 
