@@ -18,6 +18,15 @@ class TaskHttpService {
                 headers: { "Content-Type": "application/json" }
             }).then(response => response.json());
     }
+
+    addTask(task: Task) {
+        return httpService.post<Task>(
+            apiEndpoints.TASK,
+            JSON.stringify(task), {
+                headers: { "Content-Type": "application/json" }
+            }
+        ).then(response => response.json() as unknown as Task);
+    }
 }
 
-export const taskHttpService = new TaskHttpService()
+export const taskHttpService = new TaskHttpService();
