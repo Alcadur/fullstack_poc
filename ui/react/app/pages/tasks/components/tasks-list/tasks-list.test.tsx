@@ -1,14 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { useLoaderData } from "react-router";
-import { Tasks } from "./tasks";
 import type { Task } from "@/model/task.model";
+import { TasksList } from "@/pages/tasks/components/tasks-list/tasks-list";
+import { renderWithStore } from "@/utils/render-with-store";
 
 jest.mock("react-router", () => ({
     useLoaderData: jest.fn(),
 }));
 
-jest.mock("@/pages/tasks/task-row", () => ({
-    TaskRow: ({ task }: { task: Task }) => <div data-testid={`task-${task.uuid}`}>{task.title}</div>,
+jest.mock("@/pages/tasks/components/tasks-list/tasks-list-row", () => ({
+    TasksListRow: ({ task }: { task: Task }) => <div data-testid={`task-${task.uuid}`}>{task.title}</div>,
 }));
 
 const mockUseLoaderData = useLoaderData as jest.MockedFunction<typeof useLoaderData>;
@@ -20,6 +21,7 @@ const mockTasks: Task[] = [
         title: "Task 1",
         description: "Description 1",
         completed: false,
+        steps: []
     },
     {
         uuid: "2",
@@ -27,6 +29,7 @@ const mockTasks: Task[] = [
         title: "Task 2",
         description: "Description 2",
         completed: true,
+        steps: []
     },
     {
         uuid: "3",
@@ -34,8 +37,11 @@ const mockTasks: Task[] = [
         title: "Task 3",
         description: "Description 3",
         completed: false,
+        steps: []
     },
 ];
+
+const storeSetup = (tasks?: Task[]) => ({ preloadedState: { tasksData: { tasks: tasks ?? mockTasks } } });
 
 describe("Tasks", () => {
     beforeEach(() => {
@@ -44,7 +50,7 @@ describe("Tasks", () => {
     });
 
     it("should render all tasks from loader data", () => {
-        render(<Tasks />);
+        renderWithStore(<TasksList />, storeSetup());
 
         expect(screen.getByTestId("task-1")).toBeInTheDocument();
         expect(screen.getByTestId("task-2")).toBeInTheDocument();
@@ -52,7 +58,7 @@ describe("Tasks", () => {
     });
 
     it("should render task titles", () => {
-        render(<Tasks />);
+        renderWithStore(<TasksList />, storeSetup());
 
         expect(screen.getByText("Task 1")).toBeInTheDocument();
         expect(screen.getByText("Task 2")).toBeInTheDocument();
@@ -62,16 +68,16 @@ describe("Tasks", () => {
     it("should render empty list when no tasks", () => {
         mockUseLoaderData.mockReturnValue([]);
 
-        const { container } = render(<Tasks />);
+        const { container } = renderWithStore(<TasksList />, storeSetup([]));
 
-        expect(container.querySelector('[class*="MuiList"]')).toBeInTheDocument();
-        expect(container.querySelectorAll('[data-testid^="task-"]')).toHaveLength(0);
+        expect(container.querySelector("[class*=\"MuiList\"]")).toBeInTheDocument();
+        expect(container.querySelectorAll("[data-testid^=\"task-\"]")).toHaveLength(0);
     });
 
     it("should render tasks in correct order", () => {
-        const { container } = render(<Tasks />);
+        const { container } = renderWithStore(<TasksList />, storeSetup());
 
-        const taskElements = container.querySelectorAll('[data-testid^="task-"]');
+        const taskElements = container.querySelectorAll("[data-testid^=\"task-\"]");
         expect(taskElements).toHaveLength(3);
         expect(taskElements[0]).toHaveAttribute("data-testid", "task-1");
         expect(taskElements[1]).toHaveAttribute("data-testid", "task-2");
@@ -79,7 +85,7 @@ describe("Tasks", () => {
     });
 
     it("should use task uuid as key", () => {
-        render(<Tasks />);
+        renderWithStore(<TasksList />, storeSetup());
 
         mockTasks.forEach(task => {
             expect(screen.getByTestId(`task-${task.uuid}`)).toBeInTheDocument();
