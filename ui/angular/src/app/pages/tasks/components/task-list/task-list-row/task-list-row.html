@@ -16,4 +16,16 @@
     </mat-panel-description>
   </mat-expansion-panel-header>
   <p>{{ task.description }}</p>
+  <mat-list>
+    @for (step of localTask.steps; track $index) {
+      <mat-list-item>
+        <mat-checkbox
+          [checked]="step.completed"
+          [class]="{'spinner': step.completed !== task.steps[$index].completed}"
+          (change)="toggleStepsStatus($event, $index)"
+        />
+        {{ step.title }}
+      </mat-list-item>
+    }
+  </mat-list>
 </mat-expansion-panel>

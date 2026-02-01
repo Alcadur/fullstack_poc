@@ -3,6 +3,7 @@ import { TaskListRow } from './task-list-row';
 import { Task } from '@/models/task.model';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TaskStore } from '@/stores/task-store/task-store';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 describe('TaskListRow', () => {
   let component: TaskListRow;
@@ -41,52 +42,77 @@ describe('TaskListRow', () => {
     component.task = vi.fn(() => mockTask) as any;
   });
 
+  describe('ngOnInit', () => {
+    it('should clone the input task into localTask', () => {
+      fixture.detectChanges();
+
+      expect(component.localTask).toEqual(mockTask);
+      expect(component.localTask).not.toBe(mockTask);
+    });
+  });
+
   describe('toggleCompleted', () => {
     it('should stop event propagation', () => {
       const mockEvent = {
         stopPropagation: vi.fn()
       } as unknown as MouseEvent;
-      fixture.detectChanges()
+      fixture.detectChanges();
 
       component.toggleCompleted(mockEvent);
 
       expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(1);
     });
 
-    it('should call taskStore.updateTask with correct parameters when task is not completed', () => {
+    it('should toggle completed state on the local task and call updateTask', () => {
       mockTask = { ...mockTask, completed: false };
-      fixture.detectChanges()
+      fixture.detectChanges();
 
       component.toggleCompleted(mockEvent);
 
-      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({...mockTask, completed: true});
+      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({
+        ...mockTask,
+        completed: true
+      });
+      expect(mockTask.completed).toBe(false);
     });
 
-    it('should call taskStore.updateTask with correct parameters when task is completed', () => {
+    it('should toggle back to incomplete for a completed task', () => {
       mockTask = { ...mockTask, completed: true };
-      fixture.detectChanges()
+      fixture.detectChanges();
 
       component.toggleCompleted(mockEvent);
 
-      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({ ...mockTask, completed: false });
+      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({
+        ...mockTask,
+        completed: false
+      });
+      expect(mockTask.completed).toBe(true);
     });
+  });
 
-    it('should toggle completed state correctly', () => {
-      const task1 = { ...mockTask, completed: false };
-      component.task = vi.fn(() => task1) as any;
-      fixture.detectChanges()
-      component.toggleCompleted(mockEvent);
+  describe('toggleStepsStatus', () => {
+    it('should update step completion and call updateTask', () => {
+      mockTask = {
+        ...mockTask,
+        steps: [
+          { title: 'Step 1', completed: false },
+          { title: 'Step 2', completed: true }
+        ]
+      };
+      component.task = vi.fn(() => mockTask) as any;
+      fixture.detectChanges();
 
-      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({...task1, completed: true});
+      const event = { checked: true } as MatCheckboxChange;
+      component.toggleStepsStatus(event, 0);
 
-      mockTaskStore.updateTask.mockClear();
-
-      const task2 = { ...mockTask,  uuid: 'new-uuid-321', completed: true };
-      component.task = vi.fn(() => task2) as any;
-      component.ngOnInit();
-      component.toggleCompleted(mockEvent);
-
-      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({...task2, completed: false});
+      expect(mockTaskStore.updateTask).toHaveBeenCalledWith({
+        ...mockTask,
+        steps: [
+          { title: 'Step 1', completed: true },
+          { title: 'Step 2', completed: true }
+        ]
+      });
+      expect(mockTask.steps[0].completed).toBe(false);
     });
   });
 
