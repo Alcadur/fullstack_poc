@@ -65,9 +65,9 @@ export const TaskStore = signalStore(
             switchMap((task) =>
               httpService.updateTask(task).pipe(
                 tapResponse({
-                  next: () => {
+                  next: (resTask) => {
                     patchState(store, { areToDoTasksLoading: false });
-                    patchState(store, updateEntity({ id: task.uuid, changes: () => task }, { selectId }));
+                    patchState(store, updateEntity({ id: resTask.uuid, changes: () => resTask }, { selectId }));
                   },
                   error: () => patchState(store, { areToDoTasksLoading: false })
                 })
