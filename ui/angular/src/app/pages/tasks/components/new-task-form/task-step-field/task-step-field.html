@@ -1,0 +1,14 @@
+<div>
+  <mat-checkbox [formControl]="stepForm.controls.completed" />
+  <mat-form-field>
+    <mat-label>Step title</mat-label>
+    <input
+      matInput
+      [required]="false"
+      [formControl]="stepForm.controls.title"
+      (keydown.enter)="addStep($event)"
+      data-testid="step-title-input"
+    >
+  </mat-form-field>
+  <button type="button" mat-button (click)="addStep($event)" [disabled]="stepForm.invalid">Add Step</button>
+</div>
