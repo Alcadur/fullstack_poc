@@ -1,0 +1,39 @@
+<form [formGroup]="taskForm" (submit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Title</mat-label>
+    <input formControlName="title" matInput>
+    @if (taskForm.controls.title.touched && taskForm.controls.title.hasError('required')) {
+      <mat-error>Task title is required</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description" class="test"></textarea>
+    @if (taskForm.hasError('descriptionOrStepsRequired') && taskForm.controls.description.touched) {
+      <mat-error>
+        Task description is required if there are no steps
+      </mat-error>
+    }
+  </mat-form-field>
+
+  @if (taskForm.hasError('descriptionOrStepsRequired') && taskForm.controls.steps.touched) {
+    <div class="error-message">
+      Task must have at least one step if description is empty
+    </div>
+  }
+
+  <task-step-field (onStepAdd)="addStep($event)" />
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="taskForm.invalid || isRequestInProgress"
+  >
+    Create
+  </button>
+  <mat-list role="list" class="steps-list">
+    @for (step of steps.controls; track $index) {
+      <task-step-list-row [stepControl]="step" (onRemove)="removeStep($index)" />
+    }
+  </mat-list>
+</form>

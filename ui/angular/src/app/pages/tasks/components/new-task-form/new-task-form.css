@@ -1,0 +1,32 @@
+
+form {
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  overflow: auto;
+  padding-top: 6px;
+
+  & > button {
+    flex-shrink: 0;
+  }
+}
+
+.steps-list {
+  overflow: auto;
+
+  &:not(:empty) {
+    min-height: 50px;
+  }
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 75%;
+  margin-top: -16px;
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+.test {
+  color: red;
+}
