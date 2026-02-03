@@ -33,7 +33,7 @@ Please take note that this is Proof of Concept, and I am aware of the luck of se
   - [x] Edit task step status
   - [ ] Edit task step title
   - [ ] Edit task description
-  - [ ] Add a new task
+  - [x] Add a new task
 - [ ] Global chat 
 
 #### React:
