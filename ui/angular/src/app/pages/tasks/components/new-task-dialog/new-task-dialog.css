@@ -1,0 +1,52 @@
+@keyframes closeButtonMove {
+  0%, 100% {
+    right: -3px;
+    top: 0;
+  }
+  20% {
+    right: calc(100% + 3px);
+    top: 0;
+  }
+  50% {
+    right: calc(100% + 3px);
+    top: 100%;
+  }
+  70% {
+    right: -3px;
+    top: 100%;
+  }
+}
+
+@keyframes closeButtonRotate {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: -360deg;
+  }
+}
+
+dialog {
+  overflow: visible;
+  border: 0;
+  text-align: center;
+}
+
+.close-button {
+  --mat-button-text-hover-state-layer-opacity: 0;
+  --mat-button-text-focus-state-layer-opacity: 0;
+  --mat-button-text-pressed-state-layer-opacity: 0;
+  --rotation-speed: 1.5s;
+  --move-speed: calc(var(--rotation-speed) * 4);
+  position: absolute;
+  top: 0;
+  right: -3px;
+  translate: 50% -50%;
+
+  animation: closeButtonRotate var(--rotation-speed) infinite linear, closeButtonMove var(--move-speed) linear forwards infinite;
+  animation-play-state: paused;
+}
+
+.close-button-play {
+  animation-play-state: running;
+}

@@ -1,11 +1,16 @@
-<mat-toolbar class="toolbar">
-  <icon-username [username]="user.username" />
-  <button
-    (click)="logout()"
-    mat-raised-button
-    color="primary"
-    type="button"
-  >
-    Logout
+<div class="toolbar-wrapper">
+  <mat-toolbar class="toolbar">
+    <icon-username [username]="user.username" />
+    <button
+      (click)="logout()"
+      mat-raised-button
+      color="primary"
+      type="button"
+    >
+      Logout
+    </button>
+  </mat-toolbar>
+  <button class="add-task-btn" matButton="filled" (click)="openNewTaskDialog.emit()">
+    Add Task
   </button>
-</mat-toolbar>
+</div>

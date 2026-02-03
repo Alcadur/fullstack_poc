@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { IconUsername } from '@/components/icon-username/icon-username';
 import { MatButton } from '@angular/material/button';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -22,6 +22,8 @@ export class TopBar {
   readonly user = this.userStore.user()!;
   readonly userHttpService = inject(UserHttpService);
   readonly router = inject(Router);
+
+  openNewTaskDialog = output<void>();
 
   logout() {
     this.userHttpService.logout().pipe(

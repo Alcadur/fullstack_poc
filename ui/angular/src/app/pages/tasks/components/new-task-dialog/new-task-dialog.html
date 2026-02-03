@@ -1,0 +1,12 @@
+<dialog #dialog>
+  <h2>New Task</h2>
+  <new-task-form />
+  <button
+    mat-button
+    class="close-button"
+    (click)="closeDialog()"
+    [ngClass]="{ 'close-button-play': isRequestInProgress }"
+  >
+  ✖️
+  </button>
+</dialog>

@@ -1,8 +1,10 @@
 <section class="container">
-  <top-bar />
+  <top-bar (openNewTaskDialog)="openNewTaskDialog()" />
   @defer (when toDoLoading()) {
     <task-list [tasks]="tasks()" />
   } @loading (minimum 1s) {
     Loading tasks...
   }
+
+  <new-task-dialog />
 </section>
