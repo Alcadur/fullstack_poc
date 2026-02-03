@@ -1,0 +1,13 @@
+@let step = stepControl().getRawValue();
+
+<mat-list-item role="listitem" >
+  <div matListItemLine class="step-list-item-content">
+    <p>
+      <mat-checkbox (change)="onStatusChange()" [checked]="step.completed" />
+      {{ step.title }}
+    </p>
+    <button type="button" mat-icon-button (click)="onRemove.emit()">
+      🗑
+    </button>
+  </div>
+</mat-list-item>
