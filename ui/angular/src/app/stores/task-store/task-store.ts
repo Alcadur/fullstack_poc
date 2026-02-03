@@ -1,12 +1,12 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { debounceTime, pipe, switchMap, tap } from 'rxjs';
+import { debounceTime, delay, pipe, switchMap, tap } from 'rxjs';
 import { inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { Task } from '@/models/task.model';
 import { TaskHttpService } from '@/utils/taskHttp.service';
 import {
-  addEntities,
+  addEntities, addEntity,
   removeAllEntities,
   SelectEntityId,
   setAllEntities,
@@ -17,11 +17,13 @@ import {
 type TaskStore = {
   areToDoTasksLoading: boolean,
   areCompletedTasksLoading: boolean,
+  isNewTaskRequestInProgress: boolean
 }
 
 const initialState: TaskStore = {
   areToDoTasksLoading: false,
   areCompletedTasksLoading: false,
+  isNewTaskRequestInProgress: false
 };
 
 const selectId: SelectEntityId<Task> = (todo) => todo.uuid;
@@ -71,6 +73,23 @@ export const TaskStore = signalStore(
                 })
               )
             ),
+          )
+        ),
+        addTask: rxMethod<Task>(
+          pipe(
+            tap(() => patchState(store, { isNewTaskRequestInProgress: true })),
+            switchMap((task) =>
+              httpService.addTask(task).pipe(
+                tapResponse({
+                  next: (resTask) => {
+                    patchState(store, addEntity(resTask, { selectId }))
+                  },
+                  error: () => null
+                })
+              )
+            ),
+            delay(250),
+            tap(() => patchState(store, { isNewTaskRequestInProgress: false }))
           )
         )
       })

@@ -18,4 +18,8 @@ export class TaskHttpService {
   updateTask(task: Task): Observable<Task> {
     return this.httpClient.patch<Task>(BASE_URL, task);
   }
+
+  addTask(task: Task): Observable<Task> {
+    return this.httpClient.post<Task>(BASE_URL, task);
+  }
 }
