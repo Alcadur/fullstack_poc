@@ -21,7 +21,7 @@ Please take note that this is Proof of Concept, and I am aware of the luck of se
 - [x] DB + INITIAL DATA
 - [ ] Register
 - [x] Tasks CRUD
-- [ ] Global chat
+- [x] Global chat
 
 #### Angular:
 - [x] Login page
@@ -47,4 +47,4 @@ Please take note that this is Proof of Concept, and I am aware of the luck of se
   - [ ] Edit task step title
   - [ ] Edit task description
   - [x] Add a new task
-- [ ] Global chat 
+- [x] Global chat 
