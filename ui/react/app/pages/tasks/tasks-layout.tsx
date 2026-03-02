@@ -7,6 +7,7 @@ import { userHttpService } from "@/service/user-http.service";
 import { AppRoutes } from "@/routes/app-routes.model";
 import { useRef } from "react";
 import { NewTaskDialog } from "@/pages/tasks/components/new-task-dialog/new-task-dialog";
+import { Chat } from "@/components/chat/chat";
 
 
 export default function TasksLayout() {
@@ -22,7 +23,7 @@ export default function TasksLayout() {
     return (
         <section className="mx-auto md:max-w-250 min-w-75">
             <NewTaskDialog ref={dialogRef} />
-            <header className="flex justify-center gap-3 p-3 shadow-[0_15px_10px_-15px_#111]">
+            <header className="flex justify-center gap-3 p-3 shadow-[0_15px_10px_-15px_#111]" style={{ anchorName: "--header-container" }}>
                 <AvatarName username={user.username} />
                 <Button variant="contained" color="error" onClick={handleLogout} data-testid="logout-button">
                     Logout
@@ -36,6 +37,7 @@ export default function TasksLayout() {
                     Add task
                 </Button>
                 <Outlet />
+                <Chat />
             </main>
 
         </section>
