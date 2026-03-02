@@ -6,15 +6,27 @@ import hamster.dev.fullstack_poc.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.PageRequest;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
 
-    public void sendMessage(User sender, String content) {
+    public Message savedMessage(User sender, String content) {
         Message message = new Message();
         message.setSender(sender);
         message.setContent(content);
-        messageRepository.save(message);
+        return messageRepository.save(message);
+    }
+
+    public Collection<Message> getLastMessages(int limit) {
+        List<Message> messages = messageRepository.findLastMessages(PageRequest.of(0, limit));
+        Collections.reverse(messages);
+        return messages;
     }
 }

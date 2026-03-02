@@ -36,10 +36,10 @@ public class DataLoader implements CommandLineRunner {
         taskService.createTask(Tyrell, "Party", "Remember to buy a gift for Alice's birthday party");
         taskService.createTask(Tyrell, "Home renovation", "[API:STEPS]-[]paint the walls, -[]replace the flooring, -[]install new cabinets");
 
-        messageService.sendMessage(Bella, "Hello Alice, how are you doing today?");
-        messageService.sendMessage(Alice, "I'm doing well, thanks for asking!");
-        messageService.sendMessage(Tyrell, "Hey Alice, do you want to join me for a party this weekend?");
-        messageService.sendMessage(Alice, "Sure, that sounds like fun!");
+        messageService.savedMessage(Bella, "Hello Alice, how are you doing today?");
+        messageService.savedMessage(Alice, "I'm doing well, thanks for asking!");
+        messageService.savedMessage(Tyrell, "Hey Alice, do you want to join me for a party this weekend?");
+        messageService.savedMessage(Alice, "Sure, that sounds like fun!");
 
         User User500 = userService.createDemoUser("User500", "$trongPassword.123!");
         for (int i = 0; i < 100; i++) {
